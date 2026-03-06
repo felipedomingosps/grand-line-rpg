@@ -3,389 +3,750 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grand Line Chronicles — RPG Forum</title>
+<title>Grand Line Chronicles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --ocean-deep:#0a1628; --ocean-mid:#0d1f3c; --ocean-surface:#102447; --ocean-light:#1a3a6b;
-  --plank-dark:#2a1a0e; --plank-mid:#3d2512; --plank-light:#5c3a1e; --plank-warm:#7a4f2a;
-  --gold-deep:#7a5c00; --gold-mid:#c49a00; --gold:#e8b800; --gold-light:#f5d060; --gold-shine:#fff3a0;
-  --rum:#8b2500; --rum-light:#c43800;
-  --sail:#f0e6c8; --sail-dark:#d4c89a; --foam:#b8d4e8; --foam-light:#dceef8;
-  --text-main:#e8dcc8; --text-dim:#a09070; --text-faint:#5a4a35;
-  --border:rgba(232,184,0,0.2); --border-bright:rgba(232,184,0,0.5);
-  --glow:0 0 20px rgba(232,184,0,0.15); --glow-strong:0 0 40px rgba(232,184,0,0.3);
+/* ============================================================
+   RESET & TOKENS
+============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ocean-deep:#0a1628;--ocean-mid:#0d1f3c;--ocean-surface:#102447;--ocean-light:#1a3a6b;
+  --plank-dark:#2a1a0e;--plank-mid:#3d2512;--plank-light:#5c3a1e;--plank-warm:#7a4f2a;
+  --gold-deep:#7a5c00;--gold-mid:#c49a00;--gold:#e8b800;--gold-light:#f5d060;--gold-shine:#fff3a0;
+  --rum:#8b2500;--rum-light:#c43800;
+  --sail:#f0e6c8;--sail-dark:#d4c89a;--foam:#b8d4e8;--foam-light:#dceef8;
+  --green:#15803d;--green-light:#4ade80;
+  --text-main:#e8dcc8;--text-dim:#a09070;--text-faint:#5a4a35;
+  --border:rgba(232,184,0,0.2);--border-bright:rgba(232,184,0,0.5);
+  --glow:0 0 20px rgba(232,184,0,0.15);--glow-strong:0 0 40px rgba(232,184,0,0.3);
+  --shadow:0 4px 20px rgba(0,0,0,0.6);
 }
 html,body{width:100%;height:100%;overflow:hidden;background:var(--ocean-deep);color:var(--text-main);font-family:'Crimson Pro',Georgia,serif;font-size:16px;}
-body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 120% 60% at 50% 100%,rgba(16,36,71,0.8) 0%,transparent 60%),radial-gradient(ellipse 80% 40% at 20% 80%,rgba(10,22,40,0.6) 0%,transparent 50%),radial-gradient(ellipse 60% 30% at 80% 70%,rgba(13,31,60,0.5) 0%,transparent 50%);pointer-events:none;}
-.waves-bg{position:fixed;bottom:0;left:0;right:0;height:120px;z-index:0;overflow:hidden;opacity:0.15;}
+button{font-family:inherit;cursor:pointer;}
+input,textarea,select{font-family:inherit;}
+
+/* ============================================================
+   BACKGROUNDS
+============================================================ */
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 120% 60% at 50% 100%,rgba(16,36,71,0.8) 0%,transparent 60%),radial-gradient(ellipse 80% 40% at 20% 80%,rgba(10,22,40,0.6) 0%,transparent 50%);pointer-events:none;}
+.waves-bg{position:fixed;bottom:0;left:0;right:0;height:100px;z-index:0;overflow:hidden;opacity:0.12;}
 .wave{position:absolute;width:200%;height:100%;animation:waveMove linear infinite;}
 .wave svg{width:50%;height:100%;fill:var(--foam);}
-.wave:nth-child(1){animation-duration:8s;opacity:0.5;top:0;}
-.wave:nth-child(2){animation-duration:12s;opacity:0.3;top:15px;animation-direction:reverse;}
+.wave:nth-child(1){animation-duration:9s;opacity:0.5;}
+.wave:nth-child(2){animation-duration:14s;opacity:0.3;top:12px;animation-direction:reverse;}
 @keyframes waveMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-#app{position:relative;z-index:1;width:100%;height:100vh;display:flex;flex-direction:column;}
 
-/* NAV */
-#topnav{height:56px;flex-shrink:0;background:linear-gradient(180deg,var(--plank-dark) 0%,rgba(42,26,14,0.95) 100%);border-bottom:2px solid var(--gold-deep);display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-shadow:0 2px 20px rgba(0,0,0,0.5);position:relative;}
-#topnav::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-deep),transparent);}
-.nav-logo{font-family:'Cinzel Decorative',serif;font-size:1.1rem;font-weight:700;color:var(--gold);text-shadow:0 0 20px rgba(232,184,0,0.5),0 2px 4px rgba(0,0,0,0.8);letter-spacing:0.05em;display:flex;align-items:center;gap:10px;}
-.nav-logo .skull{font-size:1.4rem;animation:bob 3s ease-in-out infinite;display:inline-block;}
+/* ============================================================
+   SCREENS (login, register, pending, admin, app)
+============================================================ */
+.screen{display:none;position:fixed;inset:0;z-index:50;}
+.screen.active{display:flex;}
+
+/* Auth screens */
+#screen-login,#screen-register,#screen-pending{
+  background:radial-gradient(ellipse at center,var(--ocean-surface) 0%,var(--ocean-deep) 70%);
+  align-items:center;justify-content:center;
+}
+.auth-box{
+  width:400px;position:relative;
+  background:linear-gradient(180deg,rgba(42,26,14,0.97),rgba(30,18,8,0.99));
+  border:2px solid var(--gold-deep);border-radius:12px;padding:40px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8),0 0 60px rgba(232,184,0,0.04);
+}
+.auth-logo{text-align:center;margin-bottom:28px;}
+.auth-skull{font-size:3rem;display:block;margin-bottom:8px;animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 0 16px rgba(232,184,0,0.4));}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-3px) rotate(3deg)}}
-.nav-user{display:flex;align-items:center;gap:12px;font-family:'Cinzel',serif;font-size:0.75rem;color:var(--sail-dark);letter-spacing:0.1em;}
-.nav-avatar{width:34px;height:34px;border-radius:50%;border:2px solid var(--gold-deep);background:linear-gradient(135deg,var(--plank-mid),var(--ocean-light));display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;}
-.nav-avatar:hover{border-color:var(--gold);box-shadow:var(--glow);}
-.nav-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text-dim);padding:4px 12px;cursor:pointer;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.1em;transition:all 0.2s;}
-.nav-btn:hover{border-color:var(--gold-deep);color:var(--gold);background:rgba(232,184,0,0.05);}
+.auth-title{font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:var(--gold);text-shadow:var(--glow-strong);line-height:1.2;}
+.auth-sub{font-size:0.82rem;color:var(--text-dim);margin-top:5px;font-style:italic;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-family:'Cinzel',serif;font-size:0.62rem;color:var(--gold-mid);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;padding:9px 13px;background:rgba(10,22,40,0.7);border:1px solid var(--border);border-radius:5px;color:var(--text-main);font-size:0.95rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold-deep);box-shadow:0 0 0 3px rgba(122,92,0,0.15);}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-faint);font-style:italic;}
+.field select option{background:var(--plank-dark);}
+.btn-primary{width:100%;padding:11px;background:linear-gradient(135deg,var(--gold-deep),var(--gold-mid));border:1px solid var(--gold);border-radius:5px;color:var(--plank-dark);font-family:'Cinzel',serif;font-size:0.78rem;font-weight:700;letter-spacing:0.15em;transition:all 0.2s;box-shadow:0 3px 12px rgba(122,92,0,0.35);margin-top:6px;}
+.btn-primary:hover{background:linear-gradient(135deg,var(--gold-mid),var(--gold));box-shadow:var(--glow-strong);transform:translateY(-1px);}
+.btn-ghost{background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text-dim);padding:8px 16px;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.1em;transition:all 0.2s;}
+.btn-ghost:hover{border-color:var(--gold-deep);color:var(--gold);}
+.auth-link{text-align:center;margin-top:14px;font-size:0.82rem;color:var(--text-dim);}
+.auth-link a{color:var(--gold-mid);cursor:pointer;text-decoration:none;}
+.auth-link a:hover{color:var(--gold);}
+.pending-icon{font-size:3rem;display:block;text-align:center;margin-bottom:16px;animation:pulse-slow 2s ease-in-out infinite;}
+@keyframes pulse-slow{0%,100%{opacity:1}50%{opacity:0.5}}
 
-/* LAYOUT */
+/* ============================================================
+   ADMIN SCREEN
+============================================================ */
+#screen-admin{background:var(--ocean-deep);flex-direction:column;}
+.admin-nav{height:52px;background:linear-gradient(180deg,var(--plank-dark),rgba(42,26,14,0.95));border-bottom:2px solid var(--gold-deep);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;}
+.admin-nav-title{font-family:'Cinzel Decorative',serif;font-size:0.9rem;color:var(--gold);display:flex;align-items:center;gap:8px;}
+.admin-body{flex:1;overflow-y:auto;padding:32px;max-width:900px;margin:0 auto;width:100%;}
+.admin-section{margin-bottom:32px;}
+.admin-section-title{font-family:'Cinzel',serif;font-size:0.7rem;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.user-card{background:rgba(13,31,60,0.5);border:1px solid var(--border);border-radius:6px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:8px;transition:border-color 0.2s;}
+.user-card:hover{border-color:rgba(232,184,0,0.35);}
+.user-avatar-sm{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--plank-mid),var(--ocean-light));border:2px solid var(--gold-deep);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.user-info{flex:1;}
+.user-name{font-family:'Cinzel',serif;font-size:0.8rem;color:var(--sail);}
+.user-meta{font-size:0.72rem;color:var(--text-dim);margin-top:2px;}
+.badge{font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.1em;padding:2px 7px;border-radius:3px;text-transform:uppercase;}
+.badge-pending{background:rgba(139,37,0,0.3);color:var(--rum-light);border:1px solid rgba(139,37,0,0.4);}
+.badge-approved{background:rgba(21,128,61,0.25);color:var(--green-light);border:1px solid rgba(21,128,61,0.4);}
+.badge-narrator{background:rgba(122,92,0,0.3);color:var(--gold);border:1px solid var(--gold-deep);}
+.card-actions{display:flex;gap:8px;}
+.btn-approve{background:rgba(21,128,61,0.3);border:1px solid rgba(74,222,128,0.4);color:var(--green-light);border-radius:4px;padding:5px 12px;font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.1em;transition:all 0.2s;}
+.btn-approve:hover{background:rgba(21,128,61,0.5);}
+.btn-reject{background:rgba(139,37,0,0.3);border:1px solid rgba(196,56,0,0.4);color:var(--rum-light);border-radius:4px;padding:5px 12px;font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.1em;transition:all 0.2s;}
+.btn-reject:hover{background:rgba(139,37,0,0.5);}
+.btn-promote{background:rgba(122,92,0,0.3);border:1px solid var(--gold-deep);color:var(--gold-mid);border-radius:4px;padding:5px 12px;font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.1em;transition:all 0.2s;}
+.btn-promote:hover{background:rgba(122,92,0,0.5);}
+
+/* ============================================================
+   MAIN APP
+============================================================ */
+#screen-app{flex-direction:column;z-index:10;}
+#topnav{height:54px;flex-shrink:0;background:linear-gradient(180deg,var(--plank-dark),rgba(42,26,14,0.95));border-bottom:2px solid var(--gold-deep);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:relative;box-shadow:0 2px 20px rgba(0,0,0,0.5);}
+#topnav::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-deep),transparent);}
+.nav-logo{font-family:'Cinzel Decorative',serif;font-size:1rem;font-weight:700;color:var(--gold);text-shadow:0 0 20px rgba(232,184,0,0.5);display:flex;align-items:center;gap:8px;}
+.nav-skull{font-size:1.3rem;animation:bob 3s ease-in-out infinite;display:inline-block;}
+.nav-center{display:flex;align-items:center;gap:8px;}
+/* role switcher — mock only */
+.role-switcher{display:flex;background:rgba(10,22,40,0.6);border:1px solid var(--border);border-radius:20px;padding:2px;gap:2px;}
+.role-btn{padding:4px 14px;border-radius:18px;border:none;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;color:var(--text-dim);background:transparent;transition:all 0.2s;}
+.role-btn.active{background:linear-gradient(135deg,var(--gold-deep),var(--gold-mid));color:var(--plank-dark);font-weight:700;}
+.nav-right{display:flex;align-items:center;gap:10px;font-family:'Cinzel',serif;font-size:0.72rem;color:var(--sail-dark);}
+.nav-avatar{width:32px;height:32px;border-radius:50%;border:2px solid var(--gold-deep);background:linear-gradient(135deg,var(--plank-mid),var(--ocean-light));display:flex;align-items:center;justify-content:center;font-size:0.95rem;cursor:pointer;transition:border-color 0.2s;}
+.nav-avatar:hover{border-color:var(--gold);}
+.nav-btn-sm{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text-dim);padding:3px 10px;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;transition:all 0.2s;}
+.nav-btn-sm:hover{border-color:var(--gold-deep);color:var(--gold);}
+
+/* NARRATOR indicator */
+.narrator-tag{background:rgba(122,92,0,0.3);border:1px solid var(--gold-deep);border-radius:3px;padding:2px 8px;font-family:'Cinzel',serif;font-size:0.58rem;color:var(--gold);letter-spacing:0.1em;}
+
 #main{flex:1;display:flex;overflow:hidden;position:relative;}
 
-/* SIDEBAR */
-#sidebar{width:260px;flex-shrink:0;background:linear-gradient(180deg,rgba(42,26,14,0.97) 0%,rgba(35,20,10,0.97) 100%);border-right:2px solid var(--gold-deep);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;position:relative;}
-#sidebar::-webkit-scrollbar{width:4px;}
+/* ============================================================
+   SIDEBAR
+============================================================ */
+#sidebar{width:256px;flex-shrink:0;background:linear-gradient(180deg,rgba(42,26,14,0.97),rgba(35,20,10,0.97));border-right:2px solid var(--gold-deep);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;position:relative;}
+#sidebar::-webkit-scrollbar{width:3px;}
 #sidebar::-webkit-scrollbar-thumb{background:var(--gold-deep);border-radius:2px;}
-#sidebar::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 30px,rgba(0,0,0,0.08) 30px,rgba(0,0,0,0.08) 31px);pointer-events:none;}
-.sidebar-section{padding:16px 0;position:relative;}
-.sidebar-section+.sidebar-section{border-top:1px solid rgba(122,92,0,0.3);}
-.section-header{padding:0 16px 10px;display:flex;align-items:center;justify-content:space-between;}
-.section-title{font-family:'Cinzel',serif;font-size:0.65rem;font-weight:700;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
-.section-title::before{content:'';display:inline-block;width:12px;height:1px;background:var(--gold);opacity:0.6;}
-.sidebar-item{padding:8px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.15s;position:relative;border-left:2px solid transparent;}
-.sidebar-item:hover{background:rgba(232,184,0,0.06);border-left-color:var(--gold-deep);}
-.sidebar-item.active{background:rgba(232,184,0,0.1);border-left-color:var(--gold);box-shadow:inset 0 0 20px rgba(232,184,0,0.05);}
-.sidebar-item.active::after{content:'▶';position:absolute;right:12px;color:var(--gold);font-size:0.5rem;opacity:0.7;}
-.item-icon{font-size:1rem;flex-shrink:0;opacity:0.8;}
-.item-info{flex:1;min-width:0;}
-.item-name{font-family:'Cinzel',serif;font-size:0.72rem;font-weight:600;color:var(--sail);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
-.item-sub{font-size:0.68rem;color:var(--text-dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sidebar-item.active .item-name{color:var(--gold-light);}
-.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.status-dot.active{background:#4ade80;box-shadow:0 0 6px #4ade80;}
-.status-dot.idle{background:var(--gold-deep);}
-.status-dot.locked{background:var(--text-faint);}
+#sidebar::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0,transparent 28px,rgba(0,0,0,0.07) 28px,rgba(0,0,0,0.07) 29px);pointer-events:none;}
+.sb-section{padding:14px 0;position:relative;}
+.sb-section+.sb-section{border-top:1px solid rgba(122,92,0,0.25);}
+.sb-head{padding:0 14px 8px;display:flex;align-items:center;justify-content:space-between;}
+.sb-title{font-family:'Cinzel',serif;font-size:0.6rem;font-weight:700;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.sb-title::before{content:'';display:inline-block;width:10px;height:1px;background:var(--gold);opacity:0.6;}
+.sb-action{font-size:0.9rem;cursor:pointer;color:var(--gold-mid);opacity:0.7;transition:opacity 0.2s;background:none;border:none;}
+.sb-action:hover{opacity:1;}
 
-/* CHAR SIDEBAR */
-.char-subsection{padding:0 0 6px;}
-.char-sub-title{font-family:'Cinzel',serif;font-size:0.58rem;color:var(--text-faint);letter-spacing:0.2em;text-transform:uppercase;padding:6px 16px 4px;}
-.char-sidebar-item{padding:6px 16px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.15s;border-left:2px solid transparent;}
-.char-sidebar-item:hover{background:rgba(232,184,0,0.06);border-left-color:var(--gold-deep);}
-.char-sidebar-item.active{background:rgba(232,184,0,0.1);border-left-color:var(--gold);}
-.char-sidebar-item .char-avatar-sm{font-size:1rem;}
-.char-sidebar-item .char-name-sm{font-family:'Cinzel',serif;font-size:0.7rem;color:var(--sail);}
-.char-sidebar-item.active .char-name-sm{color:var(--gold-light);}
-.char-type-badge{margin-left:auto;font-size:0.55rem;font-family:'Cinzel',serif;letter-spacing:0.1em;padding:1px 5px;border-radius:2px;}
-.char-type-badge.npc{color:var(--foam);border:1px solid rgba(184,212,232,0.3);}
-.char-type-badge.me{color:var(--gold-mid);border:1px solid rgba(232,184,0,0.3);}
-.add-char-btn{margin:8px 12px 4px;width:calc(100% - 24px);padding:7px;background:rgba(232,184,0,0.06);border:1px dashed rgba(232,184,0,0.3);border-radius:4px;color:var(--text-dim);font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.add-char-btn:hover{border-color:var(--gold-deep);color:var(--gold);background:rgba(232,184,0,0.1);}
+.sb-item{padding:7px 14px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:all 0.15s;position:relative;border-left:2px solid transparent;}
+.sb-item:hover{background:rgba(232,184,0,0.06);border-left-color:var(--gold-deep);}
+.sb-item.active{background:rgba(232,184,0,0.1);border-left-color:var(--gold);}
+.sb-item.active::after{content:'▶';position:absolute;right:10px;color:var(--gold);font-size:0.48rem;opacity:0.7;}
+.sb-icon{font-size:0.95rem;flex-shrink:0;opacity:0.8;}
+.sb-info{flex:1;min-width:0;}
+.sb-name{font-family:'Cinzel',serif;font-size:0.7rem;font-weight:600;color:var(--sail);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.sb-sub{font-size:0.65rem;color:var(--text-dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-item.active .sb-name{color:var(--gold-light);}
+.sb-item.session-closed .sb-name{color:var(--text-dim);}
+.sb-item.session-closed .sb-icon{opacity:0.4;}
 
-/* CENTER */
+.status-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.status-dot.on{background:#4ade80;box-shadow:0 0 5px #4ade80;}
+.status-dot.off{background:var(--text-faint);}
+.status-dot.soon{background:var(--gold-deep);}
+
+/* char sub sections */
+.sb-sub-title{font-family:'Cinzel',serif;font-size:0.55rem;color:var(--text-faint);letter-spacing:0.18em;text-transform:uppercase;padding:5px 14px 3px;}
+.sb-char-item{padding:5px 14px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all 0.15s;border-left:2px solid transparent;}
+.sb-char-item:hover{background:rgba(232,184,0,0.06);border-left-color:var(--gold-deep);}
+.sb-char-item.active{background:rgba(232,184,0,0.1);border-left-color:var(--gold);}
+.sb-char-item .ch-avatar{font-size:0.95rem;}
+.sb-char-item .ch-name{font-family:'Cinzel',serif;font-size:0.68rem;color:var(--sail);}
+.sb-char-item.active .ch-name{color:var(--gold-light);}
+.ch-badge{margin-left:auto;font-size:0.52rem;font-family:'Cinzel',serif;letter-spacing:0.1em;padding:1px 5px;border-radius:2px;}
+.ch-badge.npc{color:var(--foam);border:1px solid rgba(184,212,232,0.3);}
+.ch-badge.me{color:var(--gold-mid);border:1px solid rgba(232,184,0,0.3);}
+
+.sb-btn{margin:6px 10px 2px;width:calc(100% - 20px);padding:6px;background:rgba(232,184,0,0.05);border:1px dashed rgba(232,184,0,0.25);border-radius:4px;color:var(--text-dim);font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.sb-btn:hover{border-color:var(--gold-deep);color:var(--gold);background:rgba(232,184,0,0.09);}
+
+/* rules link */
+.sb-rules-item{padding:7px 14px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:all 0.15s;border-left:2px solid transparent;}
+.sb-rules-item:hover{background:rgba(232,184,0,0.06);border-left-color:var(--gold-deep);}
+.sb-rules-item.active{background:rgba(232,184,0,0.1);border-left-color:var(--gold);}
+.sb-rules-item span{font-family:'Cinzel',serif;font-size:0.7rem;color:var(--text-dim);}
+.sb-rules-item.active span{color:var(--gold-light);}
+
+/* ============================================================
+   CENTER AREA
+============================================================ */
 #center{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
-/* All views use absolute positioning to fill #center — nothing pushes anything */
 .view{display:none;position:absolute;inset:0;flex-direction:column;}
 .view.active{display:flex;}
-/* PLACEHOLDER */
-#placeholder-view{align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center;}
-.placeholder-compass{font-size:5rem;animation:compassSpin 8s ease-in-out infinite;display:inline-block;filter:drop-shadow(0 0 30px rgba(232,184,0,0.3));}
-@keyframes compassSpin{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
-.placeholder-title{font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--gold);text-shadow:var(--glow-strong);}
-.placeholder-sub{font-size:1rem;color:var(--text-dim);font-style:italic;max-width:360px;line-height:1.7;}
-.placeholder-hint{font-family:'Cinzel',serif;font-size:0.65rem;color:var(--text-faint);letter-spacing:0.2em;text-transform:uppercase;}
-.placeholder-arrows{color:var(--gold-deep);font-size:0.8rem;animation:arrowPulse 2s ease-in-out infinite;}
-@keyframes arrowPulse{0%,100%{opacity:0.4;transform:translateX(0)}50%{opacity:1;transform:translateX(-6px)}}
 
-/* POSTS */
-#posts-area{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;}
-#posts-area::-webkit-scrollbar{width:5px;}
+/* placeholder */
+#view-placeholder{align-items:center;justify-content:center;gap:16px;text-align:center;padding:40px;}
+.ph-compass{font-size:4.5rem;animation:spin-slow 8s ease-in-out infinite;display:inline-block;filter:drop-shadow(0 0 28px rgba(232,184,0,0.3));}
+@keyframes spin-slow{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.ph-title{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:var(--gold);text-shadow:var(--glow-strong);}
+.ph-sub{font-size:0.95rem;color:var(--text-dim);font-style:italic;max-width:340px;line-height:1.7;}
+.ph-hint{font-family:'Cinzel',serif;font-size:0.6rem;color:var(--text-faint);letter-spacing:0.2em;text-transform:uppercase;animation:arrowPulse 2s ease-in-out infinite;}
+@keyframes arrowPulse{0%,100%{opacity:0.4}50%{opacity:1}}
+
+/* onboarding — first char creation */
+#view-onboarding{align-items:center;justify-content:center;padding:40px;}
+.onboard-box{max-width:520px;width:100%;background:linear-gradient(180deg,rgba(42,26,14,0.6),rgba(13,31,60,0.6));border:1px solid var(--border);border-radius:10px;padding:36px;}
+.onboard-title{font-family:'Cinzel Decorative',serif;font-size:1.1rem;color:var(--gold);text-align:center;margin-bottom:6px;}
+.onboard-sub{font-size:0.88rem;color:var(--text-dim);text-align:center;font-style:italic;margin-bottom:24px;}
+
+/* ============================================================
+   FORUM VIEW
+============================================================ */
+#view-forum{overflow:hidden;}
+#posts-area{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:18px;}
+#posts-area::-webkit-scrollbar{width:4px;}
 #posts-area::-webkit-scrollbar-thumb{background:var(--plank-light);border-radius:3px;}
-.session-header{text-align:center;padding:10px 0 20px;position:relative;}
-.session-header::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--gold-deep),transparent);}
-.session-title{font-family:'Cinzel Decorative',serif;font-size:1.1rem;font-weight:700;color:var(--gold);text-shadow:var(--glow);margin-bottom:4px;}
-.session-subtitle{font-size:0.8rem;color:var(--text-dim);font-style:italic;}
 
-.post-card{background:linear-gradient(135deg,rgba(13,31,60,0.6) 0%,rgba(10,22,40,0.8) 100%);border:1px solid var(--border);border-radius:6px;overflow:visible;transition:border-color 0.2s,box-shadow 0.2s;animation:postFadeIn 0.4s ease-out;position:relative;}
-@keyframes postFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.post-card:hover{border-color:rgba(232,184,0,0.35);box-shadow:var(--glow);}
-.post-card.npc-post{border-color:rgba(184,212,232,0.2);}
-.post-card.npc-post .post-header{background:rgba(13,31,60,0.6);}
+.session-banner{text-align:center;padding:8px 0 16px;position:relative;flex-shrink:0;}
+.session-banner::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--gold-deep),transparent);}
+.session-title{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--gold);text-shadow:var(--glow);margin-bottom:3px;}
+.session-sub{font-size:0.78rem;color:var(--text-dim);font-style:italic;}
+/* closed session bar */
+.session-closed-bar{background:rgba(139,37,0,0.15);border:1px solid rgba(139,37,0,0.3);border-radius:5px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin:0 24px 8px;}
+.session-closed-bar span{font-family:'Cinzel',serif;font-size:0.65rem;color:var(--rum-light);letter-spacing:0.1em;}
 
-/* DELETE BTN — visible only on my-post hover */
-.post-delete-btn{display:none;position:absolute;top:-9px;right:-9px;width:22px;height:22px;border-radius:50%;background:var(--rum);border:1px solid var(--rum-light);color:#fff;font-size:0.65rem;cursor:pointer;align-items:center;justify-content:center;transition:all 0.15s;z-index:5;line-height:1;}
+/* narrator toolbar */
+.narrator-toolbar{flex-shrink:0;background:rgba(42,26,14,0.6);border-bottom:1px solid rgba(122,92,0,0.25);padding:7px 20px;display:flex;align-items:center;gap:8px;}
+.ntool-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:4px;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.08em;transition:all 0.2s;border:1px solid;}
+.ntool-btn.open-session{background:rgba(21,128,61,0.2);border-color:rgba(74,222,128,0.3);color:var(--green-light);}
+.ntool-btn.open-session:hover{background:rgba(21,128,61,0.35);}
+.ntool-btn.close-session{background:rgba(139,37,0,0.2);border-color:rgba(196,56,0,0.35);color:var(--rum-light);}
+.ntool-btn.close-session:hover{background:rgba(139,37,0,0.35);}
+.ntool-btn.add-npc{background:rgba(13,31,60,0.5);border-color:rgba(184,212,232,0.25);color:var(--foam);}
+.ntool-btn.add-npc:hover{background:rgba(13,31,60,0.8);}
+.ntool-btn.add-note{background:rgba(122,92,0,0.2);border-color:var(--border);color:var(--gold-mid);}
+.ntool-btn.add-note:hover{background:rgba(122,92,0,0.35);}
+.ntool-btn.add-warning{background:rgba(139,37,0,0.2);border-color:rgba(196,56,0,0.3);color:#fca5a5;}
+.ntool-btn.add-warning:hover{background:rgba(139,37,0,0.35);}
+
+/* post cards */
+.post-card{background:linear-gradient(135deg,rgba(13,31,60,0.55),rgba(10,22,40,0.75));border:1px solid var(--border);border-radius:6px;overflow:visible;transition:border-color 0.2s,box-shadow 0.2s;animation:fadeUp 0.35s ease-out;position:relative;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.post-card:hover{border-color:rgba(232,184,0,0.3);}
+.post-card.npc-post{border-color:rgba(184,212,232,0.18);}
+.post-card.npc-post .post-hdr{background:rgba(13,31,60,0.55);}
+.post-card.narrator-note{border-color:rgba(122,92,0,0.4);background:linear-gradient(135deg,rgba(42,26,14,0.6),rgba(30,18,8,0.8));}
+.post-card.public-warning{border-color:rgba(196,56,0,0.5);background:linear-gradient(135deg,rgba(60,10,0,0.5),rgba(30,18,8,0.8));}
+
+.post-delete-btn{display:none;position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;background:var(--rum);border:1px solid var(--rum-light);color:#fff;font-size:0.6rem;cursor:pointer;align-items:center;justify-content:center;transition:all 0.15s;z-index:5;}
 .post-card.my-post:hover .post-delete-btn{display:flex;}
-.post-delete-btn:hover{background:var(--rum-light);transform:scale(1.15);box-shadow:0 0 10px rgba(196,56,0,0.5);}
+.post-delete-btn:hover{background:var(--rum-light);transform:scale(1.15);}
 
-.post-header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(42,26,14,0.4);border-bottom:1px solid var(--border);}
-.post-avatar{width:38px;height:38px;border-radius:50%;border:2px solid var(--gold-deep);background:linear-gradient(135deg,var(--plank-mid),var(--ocean-light));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.post-hdr{display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(42,26,14,0.35);border-bottom:1px solid var(--border);}
+.post-avatar{width:36px;height:36px;border-radius:50%;border:2px solid var(--gold-deep);background:linear-gradient(135deg,var(--plank-mid),var(--ocean-light));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
 .post-meta{flex:1;}
-.post-names{display:flex;align-items:baseline;gap:8px;font-family:'Cinzel',serif;}
-.post-player{font-size:0.65rem;color:var(--gold-mid);font-weight:600;letter-spacing:0.1em;}
-.post-char{font-size:0.8rem;color:var(--sail);font-weight:700;}
-.post-sep{font-size:0.7rem;color:var(--text-faint);}
-.post-time{font-size:0.65rem;color:var(--text-faint);margin-top:2px;font-style:italic;}
-.post-body{padding:18px 22px;font-size:1.08rem;line-height:1.9;color:var(--text-main);}
-.post-body p{margin-bottom:1em;}
+.post-names{display:flex;align-items:baseline;gap:7px;font-family:'Cinzel',serif;}
+.post-player{font-size:0.6rem;color:var(--gold-mid);font-weight:600;letter-spacing:0.1em;}
+.post-char{font-size:0.78rem;color:var(--sail);font-weight:700;}
+.post-sep{font-size:0.65rem;color:var(--text-faint);}
+.post-time{font-size:0.62rem;color:var(--text-faint);margin-top:2px;font-style:italic;}
+.post-type-tag{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.1em;padding:2px 7px;border-radius:3px;margin-left:auto;}
+.post-type-tag.note{background:rgba(122,92,0,0.3);color:var(--gold);border:1px solid var(--gold-deep);}
+.post-type-tag.warning{background:rgba(139,37,0,0.3);color:#fca5a5;border:1px solid rgba(196,56,0,0.4);}
+
+.post-body{padding:15px 18px;font-size:1.05rem;line-height:1.88;color:var(--text-main);}
+.post-body p{margin-bottom:0.85em;}
 .post-body p:last-child{margin-bottom:0;}
 .post-body em{color:var(--foam-light);font-style:italic;}
 .post-body strong{color:var(--gold-light);}
 
-.dice-roll-post{background:linear-gradient(135deg,rgba(42,26,14,0.5),rgba(122,92,0,0.2));border-color:rgba(232,184,0,0.4);padding:14px 20px;}
-.dice-roll-header{font-family:'Cinzel',serif;font-size:0.72rem;color:var(--text-dim);margin-bottom:10px;letter-spacing:0.1em;}
-.dice-faces-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;}
-.die-box{width:40px;height:40px;border-radius:7px;background:linear-gradient(135deg,var(--plank-mid),var(--plank-dark));border:2px solid var(--gold-deep);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--gold-light);transition:all 0.2s;}
-.die-box.die-max{background:linear-gradient(135deg,var(--gold-deep),rgba(122,92,0,0.6));border-color:var(--gold);box-shadow:0 0 14px rgba(232,184,0,0.5);color:var(--gold-shine);transform:scale(1.12);}
-.dice-roll-total{font-family:'Cinzel',serif;font-size:0.72rem;color:var(--text-dim);letter-spacing:0.1em;}
-.dice-roll-total strong{font-family:'Cinzel Decorative',serif;font-size:1.1rem;color:var(--gold-light);}
-.dice-label{font-size:0.75rem;color:var(--text-dim);font-family:'Cinzel',serif;}
+/* dice post */
+.dice-post-body{padding:12px 18px;}
+.dice-post-label{font-family:'Cinzel',serif;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:8px;}
+.dice-faces{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:8px;}
+.die-box{width:38px;height:38px;border-radius:7px;background:linear-gradient(135deg,var(--plank-mid),var(--plank-dark));border:2px solid var(--gold-deep);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--gold-light);}
+.die-box.die-max{background:linear-gradient(135deg,var(--gold-deep),rgba(122,92,0,0.7));border-color:var(--gold);box-shadow:0 0 12px rgba(232,184,0,0.45);color:var(--gold-shine);transform:scale(1.1);}
+.dice-total{font-family:'Cinzel',serif;font-size:0.7rem;color:var(--text-dim);}
+.dice-total strong{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--gold-light);}
 
-/* WRITE */
-#write-area{flex-shrink:0;padding:12px 16px;background:rgba(42,26,14,0.8);border-top:2px solid var(--gold-deep);}
-#write-area::before{content:'';display:block;height:1px;margin-bottom:10px;background:linear-gradient(90deg,transparent,rgba(232,184,0,0.3),transparent);}
-.write-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.write-label{font-family:'Cinzel',serif;font-size:0.65rem;color:var(--gold-mid);letter-spacing:0.15em;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
-.write-char-tag{background:rgba(232,184,0,0.12);border:1px solid var(--border);border-radius:3px;padding:2px 8px;font-size:0.65rem;color:var(--gold-light);font-family:'Cinzel',serif;}
-.autosave-indicator{font-size:0.65rem;color:var(--text-faint);display:flex;align-items:center;gap:4px;}
-.autosave-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:pulse 2s ease-in-out infinite;}
+/* ============================================================
+   WRITE AREA
+============================================================ */
+#write-area{flex-shrink:0;padding:10px 16px 12px;background:rgba(42,26,14,0.82);border-top:2px solid var(--gold-deep);}
+#write-area::before{content:'';display:block;height:1px;margin-bottom:9px;background:linear-gradient(90deg,transparent,rgba(232,184,0,0.25),transparent);}
+.write-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.write-as{font-family:'Cinzel',serif;font-size:0.6rem;color:var(--gold-mid);letter-spacing:0.15em;text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.write-char-tag{background:rgba(232,184,0,0.1);border:1px solid var(--border);border-radius:3px;padding:1px 7px;font-size:0.6rem;color:var(--gold-light);font-family:'Cinzel',serif;}
+.autosave{font-size:0.6rem;color:var(--text-faint);display:flex;align-items:center;gap:3px;}
+.autosave-dot{width:4px;height:4px;border-radius:50%;background:#4ade80;animation:pulse 2s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-#editor-container{border:1px solid var(--border);border-radius:4px;background:rgba(10,22,40,0.7);overflow:hidden;}
+#editor-container{border:1px solid var(--border);border-radius:4px;background:rgba(10,22,40,0.65);overflow:hidden;}
 .ql-toolbar{background:rgba(42,26,14,0.8)!important;border-color:var(--border)!important;border-bottom-color:var(--border)!important;}
-.ql-toolbar button,.ql-toolbar .ql-picker{color:var(--text-dim)!important;filter:invert(0.5) sepia(1) hue-rotate(10deg);}
-.ql-toolbar button:hover,.ql-toolbar .ql-picker:hover{color:var(--gold)!important;}
+.ql-toolbar button,.ql-toolbar .ql-picker{filter:invert(0.5) sepia(1) hue-rotate(10deg);}
 .ql-container{border-color:transparent!important;}
-.ql-editor{color:var(--text-main)!important;font-family:'Crimson Pro',serif!important;font-size:1rem!important;line-height:1.75!important;min-height:90px!important;max-height:140px!important;overflow-y:auto!important;}
+.ql-editor{color:var(--text-main)!important;font-family:'Crimson Pro',serif!important;font-size:1rem!important;line-height:1.75!important;min-height:80px!important;max-height:130px!important;overflow-y:auto!important;}
 .ql-editor.ql-blank::before{color:var(--text-faint)!important;font-style:italic!important;}
-.write-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
-.dice-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(139,37,0,0.3);border:1px solid rgba(196,56,0,0.4);border-radius:4px;color:var(--foam);cursor:pointer;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.1em;transition:all 0.2s;}
-.dice-btn:hover{background:rgba(139,37,0,0.5);border-color:var(--rum-light);box-shadow:0 0 12px rgba(196,56,0,0.3);}
-.dice-icon{font-size:1rem;animation:diceWobble 3s ease-in-out infinite;display:inline-block;}
-@keyframes diceWobble{0%,90%,100%{transform:rotate(0)}95%{transform:rotate(20deg)}}
-.send-btn{display:flex;align-items:center;gap:8px;padding:7px 20px;background:linear-gradient(135deg,var(--gold-deep),var(--gold-mid));border:1px solid var(--gold);border-radius:4px;color:var(--plank-dark);cursor:pointer;font-family:'Cinzel',serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;transition:all 0.2s;box-shadow:0 2px 10px rgba(232,184,0,0.2);}
-.send-btn:hover{background:linear-gradient(135deg,var(--gold-mid),var(--gold));box-shadow:var(--glow-strong);transform:translateY(-1px);}
-.send-btn:active{transform:translateY(0);}
+.write-footer{display:flex;align-items:center;justify-content:space-between;margin-top:7px;}
+.btn-dice{display:flex;align-items:center;gap:5px;padding:5px 13px;background:rgba(139,37,0,0.28);border:1px solid rgba(196,56,0,0.35);border-radius:4px;color:var(--foam);font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.08em;transition:all 0.2s;}
+.btn-dice:hover{background:rgba(139,37,0,0.45);border-color:var(--rum-light);}
+.dice-wobble{font-size:0.95rem;animation:diceWobble 3s ease-in-out infinite;display:inline-block;}
+@keyframes diceWobble{0%,90%,100%{transform:rotate(0)}95%{transform:rotate(18deg)}}
+.btn-send{display:flex;align-items:center;gap:7px;padding:6px 18px;background:linear-gradient(135deg,var(--gold-deep),var(--gold-mid));border:1px solid var(--gold);border-radius:4px;color:var(--plank-dark);font-family:'Cinzel',serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;transition:all 0.2s;box-shadow:0 2px 8px rgba(232,184,0,0.2);}
+.btn-send:hover{background:linear-gradient(135deg,var(--gold-mid),var(--gold));box-shadow:var(--glow-strong);transform:translateY(-1px);}
 
-/* RIGHT PANEL */
-#right-panel{width:0;flex-shrink:0;overflow:hidden;background:linear-gradient(180deg,rgba(42,26,14,0.97) 0%,rgba(35,20,10,0.97) 100%);border-left:0px solid var(--gold-deep);transition:width 0.35s cubic-bezier(0.4,0,0.2,1),border-width 0.35s;display:flex;flex-direction:column;}
-#right-panel.open{width:280px;border-left-width:2px;}
-.right-panel-inner{padding:20px;min-width:280px;overflow-y:auto;flex:1;}
-.right-panel-inner::-webkit-scrollbar{width:4px;}
-.right-panel-inner::-webkit-scrollbar-thumb{background:var(--gold-deep);}
-.panel-section{margin-bottom:24px;}
-.panel-section-title{font-family:'Cinzel',serif;font-size:0.65rem;font-weight:700;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(122,92,0,0.4);display:flex;align-items:center;gap:6px;}
-.synopse-box{background:rgba(10,22,40,0.5);border:1px solid var(--border);border-radius:4px;padding:12px;font-size:0.88rem;color:var(--foam-light);line-height:1.65;font-style:italic;margin-bottom:4px;}
-.session-log-item{padding:8px 10px;border-left:2px solid var(--gold-deep);margin-bottom:8px;background:rgba(10,22,40,0.3);border-radius:0 4px 4px 0;}
-.session-log-num{font-family:'Cinzel',serif;font-size:0.6rem;color:var(--gold-mid);letter-spacing:0.15em;margin-bottom:3px;}
-.session-log-text{font-size:0.84rem;color:var(--text-dim);line-height:1.55;}
-.toggle-panel-btn{position:absolute;right:0;top:50%;transform:translateY(-50%);width:20px;height:48px;background:var(--plank-dark);border:1px solid var(--gold-deep);border-right:none;border-radius:4px 0 0 4px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gold-mid);font-size:0.8rem;transition:all 0.2s;z-index:10;}
-.toggle-panel-btn:hover{background:var(--plank-mid);color:var(--gold);}
+/* ============================================================
+   RIGHT PANEL
+============================================================ */
+#right-panel{width:0;flex-shrink:0;overflow:hidden;background:linear-gradient(180deg,rgba(42,26,14,0.97),rgba(35,20,10,0.97));border-left:0px solid var(--gold-deep);transition:width 0.32s cubic-bezier(0.4,0,0.2,1),border-width 0.32s;display:flex;flex-direction:column;}
+#right-panel.open{width:272px;border-left-width:2px;}
+.rp-inner{padding:18px;min-width:272px;overflow-y:auto;flex:1;}
+.rp-inner::-webkit-scrollbar{width:3px;}
+.rp-inner::-webkit-scrollbar-thumb{background:var(--gold-deep);}
+.rp-section{margin-bottom:20px;}
+.rp-title{font-family:'Cinzel',serif;font-size:0.62rem;font-weight:700;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid rgba(122,92,0,0.35);display:flex;align-items:center;justify-content:space-between;}
+.synopse-box{background:rgba(10,22,40,0.45);border:1px solid var(--border);border-radius:4px;padding:10px;font-size:0.86rem;color:var(--foam-light);line-height:1.65;font-style:italic;}
+.session-log{padding:7px 9px;border-left:2px solid var(--gold-deep);margin-bottom:7px;background:rgba(10,22,40,0.3);border-radius:0 4px 4px 0;}
+.session-log-num{font-family:'Cinzel',serif;font-size:0.57rem;color:var(--gold-mid);letter-spacing:0.12em;margin-bottom:2px;}
+.session-log-text{font-size:0.82rem;color:var(--text-dim);line-height:1.5;}
 
-/* CHAR SHEET */
-#char-sheet-view{overflow-y:auto;}
-#char-view{padding:28px;}
-#char-view::-webkit-scrollbar{width:5px;}
-.char-sheet{max-width:640px;margin:0 auto;background:linear-gradient(180deg,rgba(42,26,14,0.5),rgba(13,31,60,0.5));border:1px solid var(--border);border-radius:8px;overflow:hidden;}
-.char-sheet-header{background:linear-gradient(135deg,rgba(122,92,0,0.3),rgba(42,26,14,0.8));border-bottom:2px solid var(--gold-deep);padding:24px;display:flex;align-items:center;gap:20px;}
-.char-big-avatar{width:72px;height:72px;border-radius:50%;border:3px solid var(--gold);background:linear-gradient(135deg,var(--plank-mid),var(--ocean-light));display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;box-shadow:var(--glow-strong);}
-.char-info h2{font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:var(--gold);margin-bottom:4px;}
-.char-info p{font-size:0.85rem;color:var(--text-dim);}
-.char-body{padding:20px 24px;display:flex;flex-direction:column;gap:20px;}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.stat-box{background:rgba(10,22,40,0.5);border:1px solid var(--border);border-radius:6px;padding:10px;text-align:center;}
-.stat-name{font-family:'Cinzel',serif;font-size:0.55rem;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px;}
-.stat-val{font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--gold-light);}
-.char-section-title{font-family:'Cinzel',serif;font-size:0.65rem;color:var(--gold-mid);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid rgba(122,92,0,0.3);}
-.ability-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
-.ability-list li{display:flex;align-items:baseline;gap:8px;font-size:0.88rem;color:var(--text-main);padding:6px 10px;background:rgba(10,22,40,0.3);border-radius:4px;border-left:2px solid var(--gold-deep);}
-.ability-name{font-weight:600;color:var(--gold-light);font-family:'Cinzel',serif;font-size:0.75rem;white-space:nowrap;}
-.ability-desc{color:var(--text-dim);font-style:italic;}
-.hp-bar-wrap{margin:4px 0;}
-.hp-bar-label{display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.72rem;color:var(--text-dim);font-family:'Cinzel',serif;}
-.hp-bar{height:8px;background:rgba(10,22,40,0.7);border-radius:4px;overflow:hidden;border:1px solid var(--border);}
-.hp-fill{height:100%;background:linear-gradient(90deg,#16a34a,#4ade80);border-radius:4px;}
+/* CLOCKS */
+.clocks-grid{display:flex;flex-direction:column;gap:10px;}
+.clock-item{background:rgba(10,22,40,0.4);border:1px solid var(--border);border-radius:6px;padding:10px 12px;}
+.clock-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.clock-name{font-family:'Cinzel',serif;font-size:0.68rem;color:var(--sail);}
+.clock-type-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.clock-type-dot.positive{background:#4ade80;box-shadow:0 0 5px #4ade80;}
+.clock-type-dot.negative{background:var(--rum-light);box-shadow:0 0 5px var(--rum-light);}
+.clock-type-dot.neutral{background:var(--gold-mid);box-shadow:0 0 5px var(--gold-mid);}
+.clock-wheel{display:flex;gap:4px;flex-wrap:wrap;}
+.clock-tick{width:18px;height:18px;border-radius:3px;border:1px solid rgba(232,184,0,0.2);background:rgba(10,22,40,0.5);cursor:pointer;transition:all 0.15s;}
+.clock-tick.filled.positive{background:#15803d;border-color:#4ade80;}
+.clock-tick.filled.negative{background:var(--rum);border-color:var(--rum-light);}
+.clock-tick.filled.neutral{background:var(--gold-deep);border-color:var(--gold);}
+.clock-tick:hover{border-color:rgba(232,184,0,0.5);transform:scale(1.1);}
+.clock-hidden-tag{font-family:'Cinzel',serif;font-size:0.5rem;color:var(--text-faint);margin-top:4px;letter-spacing:0.1em;}
 
-/* LOGIN */
-#login-screen{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse at center,var(--ocean-surface) 0%,var(--ocean-deep) 70%);display:flex;align-items:center;justify-content:center;}
-.login-box{width:380px;position:relative;z-index:1;background:linear-gradient(180deg,rgba(42,26,14,0.95),rgba(35,20,10,0.98));border:2px solid var(--gold-deep);border-radius:10px;padding:40px;box-shadow:0 20px 60px rgba(0,0,0,0.8);}
-.login-logo{text-align:center;margin-bottom:32px;}
-.login-skull{font-size:3.5rem;display:block;margin-bottom:8px;animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(232,184,0,0.4));}
-.login-title{font-family:'Cinzel Decorative',serif;font-size:1.3rem;font-weight:700;color:var(--gold);text-shadow:var(--glow-strong);line-height:1.2;}
-.login-sub{font-size:0.8rem;color:var(--text-dim);margin-top:6px;font-style:italic;}
-.login-field{margin-bottom:16px;}
-.login-field label{display:block;font-family:'Cinzel',serif;font-size:0.65rem;color:var(--gold-mid);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;}
-.login-field input{width:100%;padding:10px 14px;background:rgba(10,22,40,0.7);border:1px solid var(--border);border-radius:5px;color:var(--text-main);font-family:'Crimson Pro',serif;font-size:1rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
-.login-field input:focus{border-color:var(--gold-deep);box-shadow:0 0 0 3px rgba(122,92,0,0.2);}
-.login-field input::placeholder{color:var(--text-faint);font-style:italic;}
-.login-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--gold-deep),var(--gold-mid));border:1px solid var(--gold);border-radius:5px;color:var(--plank-dark);font-family:'Cinzel',serif;font-size:0.8rem;font-weight:700;letter-spacing:0.15em;cursor:pointer;margin-top:8px;transition:all 0.2s;box-shadow:0 4px 15px rgba(122,92,0,0.4);}
-.login-btn:hover{background:linear-gradient(135deg,var(--gold-mid),var(--gold));box-shadow:var(--glow-strong);transform:translateY(-1px);}
+.btn-add-clock{width:100%;padding:6px;background:transparent;border:1px dashed rgba(232,184,0,0.2);border-radius:4px;color:var(--text-faint);font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;transition:all 0.2s;margin-top:8px;}
+.btn-add-clock:hover{border-color:var(--gold-deep);color:var(--gold-mid);}
 
-/* MODALS */
-.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(5,10,20,0.85);display:none;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;animation:fadeIn 0.2s ease-out;}
+.toggle-panel{position:absolute;right:0;top:50%;transform:translateY(-50%);width:18px;height:44px;background:var(--plank-dark);border:1px solid var(--gold-deep);border-right:none;border-radius:4px 0 0 4px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gold-mid);font-size:0.75rem;transition:all 0.2s;z-index:10;}
+.toggle-panel:hover{background:var(--plank-mid);color:var(--gold);}
+
+/* rope divider */
+.rope{display:flex;align-items:center;gap:6px;margin:10px 0;}
+.rope-line{flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--gold-deep) 0,var(--gold-deep) 3px,transparent 3px,transparent 7px);}
+.rope-knot{font-size:0.45rem;color:var(--gold-deep);}
+
+/* ============================================================
+   CHAR SHEET VIEW
+============================================================ */
+#view-char{overflow-y:auto;padding:24px;}
+#view-char::-webkit-scrollbar{width:4px;}
+#view-char::-webkit-scrollbar-thumb{background:var(--plank-light);}
+.char-sheet{max-width:620px;margin:0 auto;background:linear-gradient(180deg,rgba(42,26,14,0.45),rgba(13,31,60,0.45));border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.char-sheet-hdr{background:linear-gradient(135deg,rgba(122,92,0,0.28),rgba(42,26,14,0.8));border-bottom:2px solid var(--gold-deep);padding:20px;display:flex;align-items:center;gap:16px;}
+.char-big-av{width:64px;height:64px;border-radius:50%;border:3px solid var(--gold);background:linear-gradient(135deg,var(--plank-mid),var(--ocean-light));display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;box-shadow:var(--glow-strong);}
+.char-sheet-info h2{font-family:'Cinzel Decorative',serif;font-size:1.1rem;color:var(--gold);margin-bottom:3px;}
+.char-sheet-info p{font-size:0.82rem;color:var(--text-dim);}
+.char-status{display:flex;gap:6px;margin-top:6px;}
+.char-status-badge{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.1em;padding:2px 7px;border-radius:3px;}
+.char-status-badge.alive{background:rgba(21,128,61,0.25);color:var(--green-light);border:1px solid rgba(21,128,61,0.4);}
+.char-status-badge.dead{background:rgba(139,37,0,0.25);color:var(--rum-light);border:1px solid rgba(139,37,0,0.4);}
+.char-body{padding:18px 20px;display:flex;flex-direction:column;gap:18px;}
+.cs-title{font-family:'Cinzel',serif;font-size:0.62rem;color:var(--gold-mid);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:7px;padding-bottom:3px;border-bottom:1px solid rgba(122,92,0,0.25);}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.stat-box{background:rgba(10,22,40,0.45);border:1px solid var(--border);border-radius:5px;padding:8px;text-align:center;}
+.stat-name{font-family:'Cinzel',serif;font-size:0.52rem;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:3px;}
+.stat-val{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:var(--gold-light);}
+.hp-bar-wrap{margin:3px 0;}
+.hp-bar-lbl{display:flex;justify-content:space-between;font-family:'Cinzel',serif;font-size:0.65rem;color:var(--text-dim);margin-bottom:4px;}
+.hp-bar{height:7px;background:rgba(10,22,40,0.7);border-radius:4px;overflow:hidden;border:1px solid var(--border);}
+.hp-fill{height:100%;background:linear-gradient(90deg,#16a34a,#4ade80);border-radius:4px;transition:width 0.5s;}
+.ability-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.ability-list li{display:flex;align-items:baseline;gap:7px;font-size:0.86rem;color:var(--text-main);padding:5px 9px;background:rgba(10,22,40,0.28);border-radius:4px;border-left:2px solid var(--gold-deep);}
+.ab-name{font-weight:600;color:var(--gold-light);font-family:'Cinzel',serif;font-size:0.7rem;white-space:nowrap;}
+.ab-desc{color:var(--text-dim);font-style:italic;}
+
+/* narrator controls on char sheet */
+.char-narrator-bar{background:rgba(42,26,14,0.5);border-top:1px solid rgba(122,92,0,0.25);padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;}
+
+/* ============================================================
+   RULES VIEW
+============================================================ */
+#view-rules{overflow-y:auto;padding:28px;}
+.rules-content{max-width:620px;margin:0 auto;}
+.rules-title{font-family:'Cinzel Decorative',serif;font-size:1.1rem;color:var(--gold);margin-bottom:6px;}
+.rules-sub{font-size:0.82rem;color:var(--text-dim);font-style:italic;margin-bottom:20px;}
+.rule-block{background:rgba(13,31,60,0.4);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin-bottom:12px;}
+.rule-block h3{font-family:'Cinzel',serif;font-size:0.75rem;color:var(--gold-light);letter-spacing:0.1em;margin-bottom:8px;}
+.rule-block p{font-size:0.95rem;color:var(--text-main);line-height:1.75;}
+
+/* ============================================================
+   MODALS
+============================================================ */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(4,8,18,0.88);display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;animation:fadeIn 0.18s ease-out;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{transform:translateY(20px) scale(0.95);opacity:0}to{transform:none;opacity:1}}
-.dice-modal{background:linear-gradient(180deg,rgba(42,26,14,0.98),rgba(35,20,10,0.98));border:2px solid var(--gold-deep);border-radius:10px;padding:32px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,0.9),var(--glow-strong);animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
-.modal-title{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--gold);text-align:center;margin-bottom:20px;text-shadow:var(--glow);}
-.dice-config{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:12px;}
-.dice-count-btn{width:36px;height:36px;border-radius:50%;background:rgba(122,92,0,0.3);border:1px solid var(--gold-deep);color:var(--gold);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-.dice-count-btn:hover{background:rgba(122,92,0,0.5);}
-.dice-count-display{font-family:'Cinzel Decorative',serif;font-size:2rem;color:var(--gold);min-width:60px;text-align:center;}
-.dice-d6-label{font-family:'Cinzel',serif;font-size:0.72rem;color:var(--text-dim);text-align:center;margin-bottom:20px;letter-spacing:0.1em;}
-/* dice preview: ghost dice showing how many will roll */
-.dice-preview-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-height:44px;margin-bottom:24px;}
-.die-preview{width:40px;height:40px;border-radius:7px;background:rgba(42,26,14,0.5);border:1px dashed rgba(122,92,0,0.4);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--text-faint);}
-.modal-btns{display:flex;gap:10px;}
-.modal-btn{flex:1;padding:10px;border-radius:5px;cursor:pointer;font-family:'Cinzel',serif;font-size:0.72rem;letter-spacing:0.1em;font-weight:700;transition:all 0.2s;}
-.modal-btn.roll{background:linear-gradient(135deg,var(--rum),var(--rum-light));border:1px solid var(--rum-light);color:var(--sail);}
-.modal-btn.roll:hover{box-shadow:0 0 20px rgba(196,56,0,0.4);transform:translateY(-1px);}
-.modal-btn.send{background:linear-gradient(135deg,var(--gold-deep),var(--gold-mid));border:1px solid var(--gold);color:var(--plank-dark);}
-.modal-btn.send:hover{box-shadow:var(--glow);transform:translateY(-1px);}
-.modal-btn.cancel{background:transparent;border:1px solid var(--border);color:var(--text-dim);flex:0;padding:10px 16px;}
-.modal-btn.cancel:hover{border-color:var(--text-dim);color:var(--text-main);}
+@keyframes slideUp{from{transform:translateY(18px) scale(0.96);opacity:0}to{transform:none;opacity:1}}
+
+.modal-box{background:linear-gradient(180deg,rgba(42,26,14,0.99),rgba(30,18,8,0.99));border:2px solid var(--gold-deep);border-radius:10px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,0.9);animation:slideUp 0.28s cubic-bezier(0.34,1.56,0.64,1);}
+.modal-box.danger-border{border-color:var(--rum);}
+.modal-title{font-family:'Cinzel Decorative',serif;font-size:0.95rem;color:var(--gold);text-align:center;margin-bottom:6px;text-shadow:var(--glow);}
+.modal-sub{font-size:0.85rem;color:var(--text-dim);text-align:center;margin-bottom:18px;line-height:1.6;}
+.modal-sub strong{color:var(--gold-light);}
+
+/* generic modal buttons */
+.modal-btns{display:flex;gap:8px;margin-top:16px;}
+.mbtn{flex:1;padding:9px;border-radius:5px;font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.08em;font-weight:700;transition:all 0.18s;border:1px solid;}
+.mbtn.gold{background:linear-gradient(135deg,var(--gold-deep),var(--gold-mid));border-color:var(--gold);color:var(--plank-dark);}
+.mbtn.gold:hover{background:linear-gradient(135deg,var(--gold-mid),var(--gold));box-shadow:var(--glow);}
+.mbtn.rum{background:linear-gradient(135deg,var(--rum),var(--rum-light));border-color:var(--rum-light);color:var(--sail);}
+.mbtn.rum:hover{box-shadow:0 0 16px rgba(196,56,0,0.4);}
+.mbtn.ghost{background:transparent;border-color:var(--border);color:var(--text-dim);flex:0;padding:9px 14px;}
+.mbtn.ghost:hover{border-color:var(--text-dim);color:var(--text-main);}
+.mbtn.foam{background:rgba(13,31,60,0.6);border-color:rgba(184,212,232,0.3);color:var(--foam);}
+.mbtn.foam:hover{background:rgba(13,31,60,0.9);}
+.mbtn:disabled{opacity:0.3;cursor:not-allowed;transform:none!important;}
+
 /* delete modal */
-.delete-modal{background:linear-gradient(180deg,rgba(42,26,14,0.98),rgba(35,20,10,0.98));border:2px solid var(--rum);border-radius:10px;padding:28px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,0.9),0 0 40px rgba(139,37,0,0.15);animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
-.delete-modal-title{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--rum-light);text-align:center;margin-bottom:8px;}
-.delete-modal-sub{font-size:0.9rem;color:var(--text-dim);text-align:center;margin-bottom:20px;line-height:1.65;}
-.delete-modal-sub strong{color:var(--gold-light);}
-.delete-confirm-input{width:100%;padding:10px 14px;background:rgba(10,22,40,0.7);border:1px solid rgba(139,37,0,0.4);border-radius:5px;color:var(--text-main);font-family:'Crimson Pro',serif;font-size:1rem;outline:none;text-align:center;letter-spacing:0.2em;transition:border-color 0.2s;margin-bottom:16px;}
-.delete-confirm-input:focus{border-color:var(--rum-light);}
-.delete-confirm-input::placeholder{color:var(--text-faint);font-style:italic;letter-spacing:0;}
-.modal-btn.danger{background:linear-gradient(135deg,var(--rum),var(--rum-light));border:1px solid var(--rum-light);color:var(--sail);}
-.modal-btn.danger:hover{box-shadow:0 0 20px rgba(196,56,0,0.4);}
-.modal-btn.danger:disabled{opacity:0.3;cursor:not-allowed;transform:none!important;}
+.delete-input{width:100%;padding:9px 13px;background:rgba(10,22,40,0.7);border:1px solid rgba(139,37,0,0.4);border-radius:5px;color:var(--text-main);font-size:1rem;outline:none;text-align:center;letter-spacing:0.2em;transition:border-color 0.2s;margin-bottom:4px;}
+.delete-input:focus{border-color:var(--rum-light);}
+.delete-input::placeholder{color:var(--text-faint);font-style:italic;letter-spacing:0;}
+
+/* dice modal */
+#modal-dice .modal-box{width:320px;}
+.dice-config{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;}
+.dice-count-btn{width:34px;height:34px;border-radius:50%;background:rgba(122,92,0,0.3);border:1px solid var(--gold-deep);color:var(--gold);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.dice-count-btn:hover{background:rgba(122,92,0,0.5);}
+.dice-count-num{font-family:'Cinzel Decorative',serif;font-size:1.8rem;color:var(--gold);min-width:50px;text-align:center;}
+.dice-d6-lbl{font-family:'Cinzel',serif;font-size:0.68rem;color:var(--text-dim);text-align:center;margin-bottom:16px;letter-spacing:0.1em;}
+.dice-preview{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;min-height:40px;margin-bottom:20px;}
+.die-ghost{width:36px;height:36px;border-radius:6px;background:rgba(42,26,14,0.4);border:1px dashed rgba(122,92,0,0.35);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--text-faint);}
+
+/* NPC modal */
+#modal-npc .modal-box{width:440px;}
+.npc-ai-note{background:rgba(122,92,0,0.12);border:1px solid rgba(122,92,0,0.3);border-radius:4px;padding:8px 12px;font-size:0.8rem;color:var(--gold-mid);margin-top:8px;font-style:italic;}
+
+/* narrator note modal */
+#modal-narrator-post .modal-box{width:480px;}
+.post-type-select{display:flex;gap:8px;margin-bottom:16px;}
+.post-type-opt{flex:1;padding:8px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;text-align:center;}
+.post-type-opt.selected.note{background:rgba(122,92,0,0.2);border-color:var(--gold-deep);color:var(--gold);}
+.post-type-opt.selected.warning{background:rgba(139,37,0,0.2);border-color:rgba(196,56,0,0.4);color:#fca5a5;}
+
+/* clock modal */
+#modal-clock .modal-box{width:380px;}
+.clock-type-row{display:flex;gap:8px;margin-bottom:14px;}
+.clock-type-opt{flex:1;padding:8px 4px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;text-align:center;}
+.clock-type-opt.selected.positive{background:rgba(21,128,61,0.2);border-color:rgba(74,222,128,0.4);color:var(--green-light);}
+.clock-type-opt.selected.negative{background:rgba(139,37,0,0.2);border-color:rgba(196,56,0,0.4);color:var(--rum-light);}
+.clock-type-opt.selected.neutral{background:rgba(122,92,0,0.2);border-color:var(--gold-deep);color:var(--gold);}
+
 /* add char modal */
-.add-char-modal{background:linear-gradient(180deg,rgba(42,26,14,0.98),rgba(35,20,10,0.98));border:2px solid var(--gold-deep);border-radius:10px;padding:28px;width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.9);animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
-.char-pick-list{display:flex;flex-direction:column;gap:8px;margin:16px 0;max-height:300px;overflow-y:auto;}
-.char-pick-list::-webkit-scrollbar{width:4px;}
+#modal-add-char .modal-box{width:400px;}
+.char-pick-list{display:flex;flex-direction:column;gap:7px;max-height:280px;overflow-y:auto;margin:14px 0;}
+.char-pick-list::-webkit-scrollbar{width:3px;}
 .char-pick-list::-webkit-scrollbar-thumb{background:var(--gold-deep);}
-.char-pick-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(10,22,40,0.4);border:1px solid var(--border);border-radius:5px;cursor:pointer;transition:all 0.15s;}
-.char-pick-item:hover{background:rgba(232,184,0,0.1);border-color:var(--gold-deep);}
+.char-pick-item{display:flex;align-items:center;gap:10px;padding:9px 13px;background:rgba(10,22,40,0.4);border:1px solid var(--border);border-radius:5px;cursor:pointer;transition:all 0.15s;}
+.char-pick-item:hover{background:rgba(232,184,0,0.08);border-color:var(--gold-deep);}
 .char-pick-item.selected{background:rgba(232,184,0,0.12);border-color:var(--gold);}
-.char-pick-avatar{font-size:1.5rem;}
-.char-pick-info h4{font-family:'Cinzel',serif;font-size:0.8rem;color:var(--sail);}
-.char-pick-info p{font-size:0.72rem;color:var(--text-dim);margin-top:1px;}
-.char-pick-type{margin-left:auto;font-size:0.6rem;font-family:'Cinzel',serif;letter-spacing:0.1em;}
+.char-pick-av{font-size:1.4rem;}
+.char-pick-info h4{font-family:'Cinzel',serif;font-size:0.76rem;color:var(--sail);}
+.char-pick-info p{font-size:0.68rem;color:var(--text-dim);margin-top:1px;}
+.char-pick-type{margin-left:auto;font-size:0.57rem;font-family:'Cinzel',serif;letter-spacing:0.1em;}
 .char-pick-type.player{color:var(--gold-mid);}
 .char-pick-type.npc{color:var(--foam);}
-/* rope */
-.rope-divider{display:flex;align-items:center;gap:8px;padding:4px 0;margin:6px 0;}
-.rope-line{flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--gold-deep) 0,var(--gold-deep) 4px,transparent 4px,transparent 8px);}
-.rope-knot{font-size:0.5rem;color:var(--gold-deep);}
-/* toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(42,26,14,0.95);border:1px solid var(--gold-deep);border-radius:6px;padding:10px 20px;font-family:'Cinzel',serif;font-size:0.75rem;color:var(--gold);box-shadow:var(--glow);z-index:300;animation:toastIn 0.3s ease-out,toastOut 0.3s ease-in 2.2s forwards;white-space:nowrap;}
-@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-@keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(10px)}}
+
+/* onboarding char select */
+.char-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.char-select-card{background:rgba(10,22,40,0.4);border:1px solid var(--border);border-radius:6px;padding:14px;cursor:pointer;transition:all 0.15s;text-align:center;}
+.char-select-card:hover{border-color:var(--gold-deep);background:rgba(232,184,0,0.06);}
+.char-select-card.selected{border-color:var(--gold);background:rgba(232,184,0,0.1);}
+.char-select-card .cs-av{font-size:2rem;margin-bottom:6px;}
+.char-select-card h4{font-family:'Cinzel',serif;font-size:0.72rem;color:var(--sail);}
+.char-select-card p{font-size:0.68rem;color:var(--text-dim);margin-top:2px;}
+
+/* ============================================================
+   TOAST
+============================================================ */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(42,26,14,0.96);border:1px solid var(--gold-deep);border-radius:5px;padding:9px 18px;font-family:'Cinzel',serif;font-size:0.7rem;color:var(--gold);box-shadow:var(--glow);z-index:500;animation:toastIn 0.25s ease-out,toastOut 0.25s ease-in 2.3s forwards;white-space:nowrap;}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(8px)}}
 </style>
 </head>
 <body>
 
 <div class="waves-bg">
   <div class="wave"><svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z"/></svg><svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z"/></svg></div>
-  <div class="wave"><svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,50 C200,10 400,70 600,50 C800,30 1000,70 1200,50 C1300,40 1380,55 1440,50 L1440,80 L0,80 Z"/></svg><svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,50 C200,10 400,70 600,50 C800,30 1000,70 1200,50 C1300,40 1380,55 1440,50 L1440,80 L0,80 Z"/></svg></div>
+  <div class="wave"><svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,50 C200,10 400,70 600,50 C800,30 1000,70 1200,50 C1440,40 1440,50 1440,50 L1440,80 L0,80 Z"/></svg><svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,50 C200,10 400,70 600,50 C800,30 1000,70 1200,50 C1440,40 1440,50 1440,50 L1440,80 L0,80 Z"/></svg></div>
 </div>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <span class="login-skull">☠️</span>
-      <div class="login-title">Grand Line<br>Chronicles</div>
-      <div class="login-sub">Entre em alto mar, navegante</div>
+<!-- ===================== LOGIN ===================== -->
+<div id="screen-login" class="screen active">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="auth-skull">☠️</span>
+      <div class="auth-title">Grand Line<br>Chronicles</div>
+      <div class="auth-sub">Entre em alto mar, navegante</div>
     </div>
-    <div class="login-field"><label>⚓ Usuário</label><input type="text" id="login-user" placeholder="Seu nome de pirata..." value="Capitão Nakama"></div>
-    <div class="login-field"><label>🔑 Senha Secreta</label><input type="password" id="login-pass" placeholder="Nenhum olho bisbilhota aqui..." value="••••••••"></div>
-    <button class="login-btn" onclick="doLogin()">⛵ ZARPAR</button>
+    <div class="field"><label>⚓ Usuário</label><input type="text" id="login-user" value="Capitão Nakama" placeholder="Seu nome de pirata..."></div>
+    <div class="field"><label>🔑 Senha</label><input type="password" id="login-pass" value="••••••••" placeholder="Senha secreta..."></div>
+    <button class="btn-primary" onclick="doLogin()">⛵ Zarpar</button>
+    <div class="auth-link">Novo por aqui? <a onclick="showScreen('screen-register')">Solicitar acesso</a></div>
+    <div class="auth-link" style="margin-top:6px"><a onclick="showScreen('screen-admin')" style="color:var(--text-faint);font-size:0.75rem">⚙ Área admin (mock)</a></div>
   </div>
 </div>
 
-<!-- APP -->
-<div id="app" style="display:none">
+<!-- ===================== REGISTER ===================== -->
+<div id="screen-register" class="screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="auth-skull">🏴‍☠️</span>
+      <div class="auth-title">Solicitar Acesso</div>
+      <div class="auth-sub">Seu pedido será avaliado pelo administrador</div>
+    </div>
+    <div class="field"><label>⚓ Nome de usuário</label><input type="text" id="reg-user" placeholder="Como quer ser chamado..."></div>
+    <div class="field"><label>📧 Email</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
+    <div class="field"><label>🔑 Senha</label><input type="password" id="reg-pass" placeholder="Escolha uma senha..."></div>
+    <div class="field"><label>🔑 Confirmar senha</label><input type="password" id="reg-pass2" placeholder="Repita a senha..."></div>
+    <button class="btn-primary" onclick="doRegister()">Enviar Pedido ⛵</button>
+    <div class="auth-link"><a onclick="showScreen('screen-login')">← Voltar ao login</a></div>
+  </div>
+</div>
+
+<!-- ===================== PENDING ===================== -->
+<div id="screen-pending" class="screen">
+  <div class="auth-box" style="text-align:center">
+    <span class="pending-icon">⏳</span>
+    <div class="auth-title" style="margin-bottom:12px">Aguardando Aprovação</div>
+    <div class="auth-sub" style="margin-bottom:20px">Seu pedido foi enviado! O administrador vai revisar e você receberá uma notificação quando for aprovado.</div>
+    <div style="background:rgba(122,92,0,0.1);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:0.82rem;color:var(--text-dim);font-style:italic;margin-bottom:20px">"Até lá, navegante, faça provisões e aguarde a maré."</div>
+    <button class="btn-ghost" onclick="showScreen('screen-login')">← Voltar ao login</button>
+  </div>
+</div>
+
+<!-- ===================== ADMIN ===================== -->
+<div id="screen-admin" class="screen">
+  <nav class="admin-nav">
+    <div class="admin-nav-title">⚙️ Painel do Administrador</div>
+    <button class="btn-ghost" onclick="showScreen('screen-login')">← Voltar</button>
+  </nav>
+  <div class="admin-body">
+    <div class="admin-section">
+      <div class="admin-section-title">⏳ Cadastros Pendentes</div>
+      <div id="pending-list">
+        <div class="user-card">
+          <div class="user-avatar-sm">🧑</div>
+          <div class="user-info">
+            <div class="user-name">Marujo Sem Nome</div>
+            <div class="user-meta">marujo@email.com • Solicitado há 2 horas</div>
+          </div>
+          <span class="badge badge-pending">Pendente</span>
+          <div class="card-actions">
+            <button class="btn-approve" onclick="approveUser(this,'Marujo Sem Nome')">✓ Aprovar</button>
+            <button class="btn-reject" onclick="rejectUser(this)">✕ Rejeitar</button>
+          </div>
+        </div>
+        <div class="user-card">
+          <div class="user-avatar-sm">🧑</div>
+          <div class="user-info">
+            <div class="user-name">Tempestade do Norte</div>
+            <div class="user-meta">tempestade@email.com • Solicitado há 5 horas</div>
+          </div>
+          <span class="badge badge-pending">Pendente</span>
+          <div class="card-actions">
+            <button class="btn-approve" onclick="approveUser(this,'Tempestade do Norte')">✓ Aprovar</button>
+            <button class="btn-reject" onclick="rejectUser(this)">✕ Rejeitar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title">✅ Usuários Ativos</div>
+      <div id="active-list">
+        <div class="user-card">
+          <div class="user-avatar-sm">🏴‍☠️</div>
+          <div class="user-info"><div class="user-name">Capitão Nakama</div><div class="user-meta">nakama@email.com • Ativo</div></div>
+          <span class="badge badge-narrator">Narrador</span>
+          <div class="card-actions"><button class="btn-ghost" style="font-size:0.6rem;padding:4px 10px">Narrador ativo</button></div>
+        </div>
+        <div class="user-card">
+          <div class="user-avatar-sm">🔥</div>
+          <div class="user-info"><div class="user-name">FireNavigator</div><div class="user-meta">fire@email.com • Ativo</div></div>
+          <span class="badge badge-approved">Jogador</span>
+          <div class="card-actions"><button class="btn-promote" onclick="promoteUser(this,'FireNavigator')">↑ Promover Narrador</button></div>
+        </div>
+        <div class="user-card">
+          <div class="user-avatar-sm">🌊</div>
+          <div class="user-info"><div class="user-name">OndaSelvagem</div><div class="user-meta">onda@email.com • Ativo</div></div>
+          <span class="badge badge-approved">Jogador</span>
+          <div class="card-actions"><button class="btn-promote" onclick="promoteUser(this,'OndaSelvagem')">↑ Promover Narrador</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MAIN APP ===================== -->
+<div id="screen-app" class="screen">
   <nav id="topnav">
-    <div class="nav-logo"><span class="skull">☠️</span>Grand Line Chronicles</div>
-    <div class="nav-user">
+    <div class="nav-logo"><span class="nav-skull">☠️</span>Grand Line Chronicles</div>
+    <div class="nav-center">
+      <span style="font-family:'Cinzel',serif;font-size:0.6rem;color:var(--text-faint);letter-spacing:0.1em;">MODO:</span>
+      <div class="role-switcher">
+        <button class="role-btn active" id="role-btn-narrator" onclick="setRole('narrator')">Narrador</button>
+        <button class="role-btn" id="role-btn-player" onclick="setRole('player')">Jogador</button>
+      </div>
+    </div>
+    <div class="nav-right">
       <span id="nav-username">Capitão Nakama</span>
+      <span class="narrator-tag" id="nav-role-tag">Narrador</span>
       <div class="nav-avatar">🏴‍☠️</div>
-      <button class="nav-btn" onclick="doLogout()">⚓ Sair</button>
+      <button class="nav-btn-sm" onclick="doLogout()">⚓ Sair</button>
     </div>
   </nav>
 
   <div id="main">
     <!-- SIDEBAR -->
     <aside id="sidebar">
-      <div class="sidebar-section">
-        <div class="section-header"><span class="section-title">⚓ Aventuras</span></div>
-        <div class="sidebar-item" onclick="selectAdventure('adventure-1',this)" data-id="adventure-1">
-          <span class="item-icon">🗺️</span>
-          <div class="item-info"><div class="item-name">A Ilha dos Tesouros</div><div class="item-sub">Sessão 7 • Ativa</div></div>
-          <div class="status-dot active"></div>
+      <!-- Aventuras -->
+      <div class="sb-section">
+        <div class="sb-head">
+          <span class="sb-title">⚓ Aventuras</span>
+          <button class="sb-action narrator-only" onclick="openNewAdventureModal()" title="Nova aventura">＋</button>
         </div>
-        <div class="sidebar-item" onclick="selectAdventure('adventure-2',this)" data-id="adventure-2">
-          <span class="item-icon">⚔️</span>
-          <div class="item-info"><div class="item-name">O Porto Maldito</div><div class="item-sub">Sessão 4 • Encerrada</div></div>
-          <div class="status-dot locked"></div>
+        <div class="sb-item active" onclick="selectAdventure('adv-1',this)" data-id="adv-1">
+          <span class="sb-icon">🗺️</span>
+          <div class="sb-info"><div class="sb-name">A Ilha dos Tesouros</div><div class="sb-sub">Sessão 7 • Ativa</div></div>
+          <div class="status-dot on"></div>
         </div>
-        <div class="sidebar-item" onclick="selectAdventure('adventure-3',this)" data-id="adventure-3">
-          <span class="item-icon">🌊</span>
-          <div class="item-info"><div class="item-name">Mar das Sombras</div><div class="item-sub">Sessão 1 • Em breve</div></div>
-          <div class="status-dot idle"></div>
+        <div class="sb-item" onclick="selectAdventure('adv-2',this)" data-id="adv-2">
+          <span class="sb-icon">⚔️</span>
+          <div class="sb-info"><div class="sb-name">O Porto Maldito</div><div class="sb-sub">Sessão 4 • Encerrada</div></div>
+          <div class="status-dot off"></div>
+        </div>
+        <div class="sb-item" onclick="selectAdventure('adv-3',this)" data-id="adv-3">
+          <span class="sb-icon">🌊</span>
+          <div class="sb-info"><div class="sb-name">Mar das Sombras</div><div class="sb-sub">Sessão 1 • Em breve</div></div>
+          <div class="status-dot soon"></div>
         </div>
       </div>
 
-      <div class="sidebar-section">
-        <div class="section-header"><span class="section-title">📜 Personagens</span></div>
-        <div class="char-subsection">
-          <div class="char-sub-title">Minha Ficha</div>
-          <div class="char-sidebar-item" onclick="selectChar('my-char',this)" data-char="my-char">
-            <span class="char-avatar-sm">🐾</span><span class="char-name-sm">Ryuu Takamatsu</span>
-            <span class="char-type-badge me">EU</span>
+      <!-- Personagens -->
+      <div class="sb-section">
+        <div class="sb-head"><span class="sb-title">📜 Personagens</span></div>
+        <div class="sb-sub-title">Minha Ficha</div>
+        <div class="sb-char-item active" onclick="selectChar('my-char',this)" data-char="my-char">
+          <span class="ch-avatar">🐾</span><span class="ch-name">Ryuu Takamatsu</span>
+          <span class="ch-badge me">EU</span>
+        </div>
+        <div class="sb-sub-title">Jogadores</div>
+        <div id="players-list">
+          <div class="sb-char-item" onclick="selectChar('char-mira',this)" data-char="char-mira">
+            <span class="ch-avatar">🔥</span><span class="ch-name">Mira Ashford</span>
           </div>
         </div>
-        <div class="char-subsection">
-          <div class="char-sub-title">Jogadores</div>
-          <div id="players-list">
-            <div class="char-sidebar-item" onclick="selectChar('char-mira',this)" data-char="char-mira">
-              <span class="char-avatar-sm">🔥</span><span class="char-name-sm">Mira Ashford</span>
-            </div>
+        <div class="sb-sub-title">NPCs</div>
+        <div id="npcs-list">
+          <div class="sb-char-item" onclick="selectChar('char-krell',this)" data-char="char-krell">
+            <span class="ch-avatar">🧓</span><span class="ch-name">Mercador Krell</span>
+            <span class="ch-badge npc">NPC</span>
           </div>
         </div>
-        <div class="char-subsection">
-          <div class="char-sub-title">NPCs</div>
-          <div id="npcs-list">
-            <div class="char-sidebar-item" onclick="selectChar('char-krell',this)" data-char="char-krell">
-              <span class="char-avatar-sm">🧓</span><span class="char-name-sm">Mercador Krell</span>
-              <span class="char-type-badge npc">NPC</span>
-            </div>
-          </div>
+        <button class="sb-btn" onclick="openAddCharModal()">✦ Adicionar Personagem</button>
+      </div>
+
+      <!-- Regras -->
+      <div class="sb-section">
+        <div class="sb-head"><span class="sb-title">📖 Regras</span></div>
+        <div class="sb-rules-item" onclick="selectRules(this)">
+          <span class="sb-icon">📜</span><span>Regras da Campanha</span>
         </div>
-        <button class="add-char-btn" onclick="openAddCharModal()">✦ Adicionar Personagem</button>
       </div>
     </aside>
 
-    <!-- CENTER -->
+    <!-- CENTER VIEWS -->
     <div id="center">
 
       <!-- PLACEHOLDER -->
-      <div id="placeholder-view" class="view active">
-        <span class="placeholder-compass">🧭</span>
-        <div class="placeholder-title">Escolha sua rota, navegante</div>
-        <div class="placeholder-sub">Selecione uma aventura para ver o histórico de posts, ou escolha um personagem para ver sua ficha.</div>
-        <div class="placeholder-arrows">◀◀◀</div>
-        <div class="placeholder-hint">Aguardando seleção</div>
+      <div id="view-placeholder" class="view active">
+        <span class="ph-compass">🧭</span>
+        <div class="ph-title">Escolha sua rota</div>
+        <div class="ph-sub">Selecione uma aventura para ver o histórico, ou um personagem para ver sua ficha.</div>
+        <div class="ph-hint">◀◀◀ aguardando seleção</div>
       </div>
 
-      <!-- FORUM VIEW -->
-      <div class="view" id="forum-view">
+      <!-- ONBOARDING -->
+      <div id="view-onboarding" class="view">
+        <div class="onboard-box">
+          <div class="onboard-title">⚓ Bem-vindo a bordo!</div>
+          <div class="onboard-sub">Antes de zarpar, escolha ou crie seu personagem.</div>
+          <div class="field"><label>Nome do Personagem</label><input type="text" id="ob-name" placeholder="Ex: Ryuu Takamatsu"></div>
+          <div class="field"><label>Classe / Função</label><input type="text" id="ob-class" placeholder="Ex: Espadachim Errante"></div>
+          <div style="margin-bottom:14px">
+            <label style="font-family:'Cinzel',serif;font-size:0.62rem;color:var(--gold-mid);letter-spacing:0.15em;text-transform:uppercase;display:block;margin-bottom:8px">Ou selecione um personagem existente</label>
+            <div class="char-select-grid">
+              <div class="char-select-card" onclick="selectOnboardChar(this,'Lena Dos Mares','Médica de Bordo')">
+                <div class="cs-av">🌙</div>
+                <h4>Lena Dos Mares</h4>
+                <p>Médica de Bordo</p>
+              </div>
+              <div class="char-select-card" onclick="selectOnboardChar(this,'Barão Rostock','Ferreiro Anão')">
+                <div class="cs-av">⚒️</div>
+                <h4>Barão Rostock</h4>
+                <p>Ferreiro Anão</p>
+              </div>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="finishOnboarding()">⛵ Entrar na Aventura</button>
+        </div>
+      </div>
+
+      <!-- FORUM -->
+      <div id="view-forum" class="view">
+        <!-- Narrator toolbar -->
+        <div id="narrator-toolbar" class="narrator-toolbar narrator-only">
+          <button class="ntool-btn open-session" id="btn-open-session" onclick="toggleSession(true)">▶ Abrir Sessão</button>
+          <button class="ntool-btn close-session" id="btn-close-session" onclick="toggleSession(false)" style="display:none">■ Fechar Sessão</button>
+          <button class="ntool-btn add-npc" onclick="openNpcModal()">＋ Criar NPC</button>
+          <button class="ntool-btn add-note" onclick="openNarratorPostModal('note')">🔒 Nota Privada</button>
+          <button class="ntool-btn add-warning" onclick="openNarratorPostModal('warning')">📢 Aviso</button>
+        </div>
+        <!-- Closed session bar (shown when session is closed) -->
+        <div id="session-closed-bar" class="session-closed-bar" style="display:none">
+          <span>🔒 Sessão encerrada — somente leitura</span>
+          <span id="session-closed-date" style="color:var(--text-faint);font-size:0.6rem"></span>
+        </div>
+
         <div id="posts-area">
-          <div class="session-header">
-            <div class="session-title" id="forum-session-title"></div>
-            <div class="session-subtitle" id="forum-session-sub"></div>
+          <div class="session-banner">
+            <div class="session-title" id="forum-title">⚓ A Ilha dos Tesouros — Sessão VII</div>
+            <div class="session-sub" id="forum-sub">Sessão ativa</div>
           </div>
 
+          <!-- WARNING post -->
+          <div class="post-card public-warning">
+            <div class="post-hdr">
+              <div class="post-avatar" style="border-color:rgba(196,56,0,0.6)">📢</div>
+              <div class="post-meta">
+                <div class="post-names"><span class="post-player" style="color:#fca5a5">MESTRE_ODESSA</span><span class="post-sep">▸</span><span class="post-char" style="color:#fca5a5">Aviso ao Grupo</span></div>
+                <div class="post-time">há 3 horas</div>
+              </div>
+              <span class="post-type-tag warning">AVISO</span>
+            </div>
+            <div class="post-body"><p><strong>Sessão especial neste sábado às 20h.</strong> Preparem-se — este capítulo terá consequências permanentes para a campanha. Decisões tomadas aqui não poderão ser desfeitas.</p></div>
+          </div>
+
+          <!-- Post 1 -->
           <div class="post-card my-post" id="post-1">
             <button class="post-delete-btn" onclick="askDeletePost('post-1')">✕</button>
-            <div class="post-header">
+            <div class="post-hdr">
               <div class="post-avatar">🐾</div>
               <div class="post-meta">
                 <div class="post-names"><span class="post-player">CAPITÃO NAKAMA</span><span class="post-sep">▸</span><span class="post-char">Ryuu Takamatsu</span></div>
@@ -393,16 +754,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
               </div>
             </div>
             <div class="post-body">
-              <p>O vento salgado açoitava o rosto de Ryuu enquanto a prancha de embarque rangeu sob suas botas. O cais exalava o cheiro inconfundível de peixe seco, óleo de lamparina e perigo iminente — uma combinação que ele havia aprendido a reconhecer nos anos de errância pelos mares do sul. Seus olhos varreram o horizonte do porto com a paciência calculada de quem foi treinado para enxergar o que outros simplesmente ignoram por hábito.</p>
-              <p>Havia algo errado no ritmo daquele lugar. Os pescadores trabalhavam sem cantar. As crianças não corriam entre as barracas. Até os gatos — aquelas criaturas que nunca mentem sobre o perigo — estavam escondidos. <em>"Esse lugar respira medo"</em>, murmurou para si mesmo, a mão descansando naturalmente sobre o cabo da katana sem que precisasse pensar no gesto. Era um reflexo antigo, velho como as cicatrizes.</p>
-              <p>Ele se posicionou dois passos atrás do Capitão Doran, cobrindo o ângulo cego da esquerda. Uma barraca coberta de mapas desbotados chamou sua atenção — não pelos mapas em si, mas pelo velho que os vendia. Pele curtida demais pelo sol. Olhos que nunca descansavam num único ponto. Mãos que ficavam sempre abaixo do balcão, fora de vista. <strong>Esse homem não era apenas um mercador.</strong></p>
-              <p><em>"Capitão"</em>, disse em voz baixíssima, quase sem mover os lábios. <em>"Fomos avistados antes mesmo de pisar em terra. Três sombras no armazém ao fundo — onze horas. Não se moveram desde que desembarcamos. Esperam um sinal."</em></p>
-              <p>Fez uma pausa. Varreu o cais com os olhos mais uma vez, lento e casual como quem admira a paisagem. <em>"A criança que vendeu frutas há pouco. Olhos velhos demais para o rosto. Desapareceu em menos de trinta segundos. Informante, provavelmente."</em> Ele deixou a informação pousar no ar entre os dois. O próximo movimento seria do Capitão.</p>
+              <p>O vento salgado açoitava o rosto de Ryuu enquanto a prancha de embarque rangeu sob suas botas. O cais exalava o cheiro inconfundível de peixe seco, óleo de lamparina e perigo iminente — uma combinação que ele havia aprendido a reconhecer nos anos de errância pelos mares do sul. Seus olhos varreram o horizonte do porto com a paciência calculada de quem foi treinado para enxergar o que outros simplesmente ignoram.</p>
+              <p>Havia algo errado no ritmo daquele lugar. Os pescadores trabalhavam sem cantar. As crianças não corriam entre as barracas. Até os gatos estavam escondidos. <em>"Esse lugar respira medo"</em>, murmurou, a mão descansando naturalmente sobre o cabo da katana.</p>
+              <p><em>"Capitão"</em>, disse em voz baixíssima. <em>"Fomos avistados antes mesmo de pisar em terra. Três sombras no armazém ao fundo — onze horas. Aguardam um sinal."</em></p>
             </div>
           </div>
 
+          <!-- Post 2 -->
           <div class="post-card">
-            <div class="post-header">
+            <div class="post-hdr">
               <div class="post-avatar">🧭</div>
               <div class="post-meta">
                 <div class="post-names"><span class="post-player">NAVEGANTE_REI</span><span class="post-sep">▸</span><span class="post-char">Capitão Doran</span></div>
@@ -410,53 +770,65 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
               </div>
             </div>
             <div class="post-body">
-              <p>Doran não olhou para o armazém. Não precisava — havia aprendido há muito tempo que olhar diretamente para o perigo era o jeito mais rápido de avisar o perigo que você o havia visto. Em vez disso, parou diante de uma barraca de frutas e fingiu examinar um mamão com interesse excessivo, deixando que seus olhos varessem o reflexo nos vidros escuros de uma lanterna pendurada no poste mais próximo.</p>
-              <p>Três figuras. Posicionadas em triângulo. Profissionais, então — amadores ficavam lado a lado, querendo se sentir protegidos pela presença um do outro. <em>"Bom trabalho"</em>, respondeu no mesmo tom inaudível de Ryuu, sem olhar para ele. <em>"A questão não é se vamos ser atacados. A questão é quando eles decidem que já viram o suficiente."</em></p>
-              <p>Largou a fruta sem comprar e caminhou casualmente em direção ao velho mercador de mapas. O sorriso que colocou no rosto não chegou aos olhos — nunca chegava, em situações assim. Era apenas uma máscara útil, como tantas outras que um capitão precisava usar para sobreviver nos mares do Norte. Ele estendeu uma moeda de ouro sobre o balcão, mais do que qualquer mapa desbotado poderia valer.</p>
-              <p><em>"Ouvi dizer que um homem com bons mapas sabe quais portos são seguros"</em>, disse em voz normal, quase descontraída. <em>"E quais têm donos que cobram pedágio de sangue."</em> Ele esperou, os olhos fixos no velho, lendo cada microexpressão. A moeda ficou entre eles como uma aposta silenciosa.</p>
-              <p>Atrás dele, sem precisar dizer nada, sabia que Ryuu já havia reposicionado para cobrir a retirada caso o velho fosse apenas um chamariz. Era a vantagem de trabalhar com alguém que pensava dois movimentos à frente — e que tinha a gentileza de não dizer isso em voz alta.</p>
+              <p>Doran não olhou para o armazém. Havia aprendido há muito tempo que olhar diretamente para o perigo era o jeito mais rápido de alertá-lo. Em vez disso, parou diante de uma barraca de frutas e fingiu examinar um mamão, deixando que seus olhos varessem o reflexo nos vidros escuros de uma lanterna próxima.</p>
+              <p>Três figuras. Posicionadas em triângulo. Profissionais. <em>"A questão não é se vamos ser atacados. A questão é quando eles decidem que já viram o suficiente."</em></p>
+              <p>Estendeu uma moeda de ouro sobre o balcão do velho mercador. <strong>Mais do que qualquer mapa poderia valer.</strong> <em>"Ouvi dizer que um homem com bons mapas sabe quais portos têm donos que cobram pedágio de sangue."</em></p>
             </div>
           </div>
 
+          <!-- Dice post -->
           <div class="post-card">
-            <div class="post-header">
+            <div class="post-hdr">
               <div class="post-avatar">🎲</div>
               <div class="post-meta">
                 <div class="post-names"><span class="post-player">NAVEGANTE_REI</span><span class="post-sep">▸</span><span class="post-char">Persuasão — Doran</span></div>
                 <div class="post-time">há 1h 40min</div>
               </div>
             </div>
-            <div class="dice-roll-post">
-              <div class="dice-roll-header">🎲 3d6 — Persuasão</div>
-              <div class="dice-faces-row">
+            <div class="dice-post-body">
+              <div class="dice-post-label">🎲 3d6 — Persuasão</div>
+              <div class="dice-faces">
                 <div class="die-box">⚃</div>
                 <div class="die-box">⚄</div>
                 <div class="die-box die-max">⚅</div>
               </div>
-              <div class="dice-roll-total">Total: <strong>15</strong> — <span style="color:var(--gold);font-size:0.75rem;font-family:Cinzel,serif">⚡ Máximo!</span></div>
+              <div class="dice-total">Total: <strong>15</strong> &nbsp;⚡ Máximo!</div>
             </div>
           </div>
 
+          <!-- NPC post -->
           <div class="post-card npc-post">
-            <div class="post-header">
-              <div class="post-avatar" style="border-color:var(--foam)">🎭</div>
+            <div class="post-hdr">
+              <div class="post-avatar" style="border-color:rgba(184,212,232,0.4)">🎭</div>
               <div class="post-meta">
                 <div class="post-names"><span class="post-player" style="color:var(--foam)">MESTRE_ODESSA</span><span class="post-sep">▸</span><span class="post-char" style="color:var(--foam-light)">Mercador Krell</span></div>
                 <div class="post-time">há 1h 20min</div>
               </div>
             </div>
             <div class="post-body">
-              <p>O velho ergueu os olhos do tecido que fingia inspecionar. Sua boca abriu-se em algo que pretendia ser um sorriso mas chegou como uma advertência — dentes dourados demais, olhos frios demais para pertencer a um simples vendedor de mapas em um porto esquecido pelos deuses do mar. A moeda de ouro desapareceu sob o balcão com uma rapidez que não combinava com aquelas mãos enrugadas e manchadas pela idade.</p>
-              <p><em>"Piratas que chegam com cautela"</em>, disse, a voz grave como âncora arrastando fundo de areia. <em>"Raros. Geralmente duram mais que os impacientes."</em> Uma pausa calculada, afiada como faca. Os olhos no Capitão, depois em Ryuu, depois de volta. <em>"Mas não muito mais."</em></p>
-              <p>Ele afastou o pano que cobria a parte dianteira do balcão e deslizou um mapa dobrado sobre a madeira manchada de anos. O pergaminho tinha marcas velhas de algo que não era tinta — escuro demais, irregular demais, com a consistência errada para ser tinta. <strong>Uma rota marcada com um símbolo que nenhum dos dois havia visto antes: um olho dentro de uma coroa de espinhos.</strong></p>
-              <p><em>"Os donos deste porto"</em>, continuou, a voz descendo a um murmúrio rasposo como casco de navio em recife, <em>"não cobram em ouro. Cobram em segredos. E vocês dois já devem um, só de ter chegado até aqui vivos."</em> Ele empurrou o mapa levemente em direção ao Capitão com dois dedos, como quem empurra uma isca. <em>"Mas eu tenho uma dívida antiga com um homem que usa o mesmo nó de marinheiro que o senhor usa no pulso. Então vou cobrar barato. Uma informação por outra. Só isso."</em></p>
-              <p>No armazém ao fundo, as três sombras continuavam estáticas. Aguardavam. Mas qualquer observador treinado perceberia que agora havia uma quarta — de um ângulo diferente, mais próximo do cais, circulando pelo lado cego. Alguém os havia flanqueado enquanto conversavam.</p>
+              <p>O velho ergueu os olhos. Sua boca abriu-se em algo que pretendia ser sorriso mas chegou como advertência — dentes dourados demais, olhos frios demais. A moeda desapareceu sob o balcão com rapidez surpreendente para aquelas mãos enrugadas.</p>
+              <p><em>"Piratas que chegam com cautela. Raros. Geralmente duram mais."</em> Ele deslizou um mapa dobrado sobre a madeira manchada. <strong>Uma rota marcada com símbolo que nenhum dos dois havia visto: um olho dentro de uma coroa de espinhos.</strong></p>
+              <p><em>"Os donos deste porto não cobram em ouro. Cobram em segredos. E vocês já devem um, só de chegar até aqui vivos."</em></p>
             </div>
           </div>
 
+          <!-- NARRATOR NOTE (only visible to narrator) -->
+          <div class="post-card narrator-note narrator-only" id="post-narrator-note-1">
+            <div class="post-hdr">
+              <div class="post-avatar" style="border-color:var(--gold-deep)">🔒</div>
+              <div class="post-meta">
+                <div class="post-names"><span class="post-player" style="color:var(--gold-mid)">MESTRE_ODESSA</span><span class="post-sep">▸</span><span class="post-char" style="color:var(--gold-light)">Nota Privada</span></div>
+                <div class="post-time">há 1 hora</div>
+              </div>
+              <span class="post-type-tag note">NOTA</span>
+            </div>
+            <div class="post-body"><p><em>Lembrete: Krell sabe sobre a Chave da Ilha. Se os jogadores rolarem Percepção acima de 12, ele vai perceber que eles estão desconfiados e vai mudar de abordagem. Preparar reação alternativa.</em></p></div>
+          </div>
+
+          <!-- Last my post -->
           <div class="post-card my-post" id="post-last">
             <button class="post-delete-btn" onclick="askDeletePost('post-last')">✕</button>
-            <div class="post-header">
+            <div class="post-hdr">
               <div class="post-avatar">🐾</div>
               <div class="post-meta">
                 <div class="post-names"><span class="post-player">CAPITÃO NAKAMA</span><span class="post-sep">▸</span><span class="post-char">Ryuu Takamatsu</span></div>
@@ -464,295 +836,866 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
               </div>
             </div>
             <div class="post-body">
-              <p>Ryuu processou tudo em frações de segundo: o mapa, o símbolo desconhecido, a nova sombra no cais. Seu peso deslocou imperceptivelmente para a perna esquerda — posição de reação, não de ataque. A mão saiu do cabo da katana e foi para o bolso, como se buscasse moedas. Menos ameaçador. Ainda não era hora de mostrar as cartas.</p>
-              <p><em>"Quarta sombra. Cais, seis horas. Flanqueando"</em>, disse apenas para Doran, a voz um fio abaixo do murmúrio constante do porto. Não era alarme — era relatório. Frios e limpos, como números num registro de bordo. O Capitão saberia o que fazer com eles.</p>
-              <p>Seus olhos voltaram para o símbolo no mapa. O olho dentro da coroa de espinhos. Havia algo familiar naquilo — não uma memória clara, com rosto e data, mas o tipo de reconhecimento visceral que vive nos ossos, aprendido antes que se saiba ler ou nomear as coisas. Ele havia visto aquele símbolo antes. <strong>Num sonho antigo, ou na lâmina de alguém que tentou matá-lo num porto do Norte. Ainda não sabia qual dos dois seria pior de ser verdade.</strong></p>
-              <p>Virou levemente o rosto para o velho, sem olhar diretamente para ele — apenas o suficiente para que Krell soubesse que a pergunta que viria era séria. <em>"A informação que o senhor quer."</em> Uma pausa. <em>"Quem mais sobreviveu à última vez que alguém chegou aqui procurando o mesmo que nós?"</em></p>
+              <p>Ryuu processou tudo em frações de segundo: o mapa, o símbolo, a nova sombra no cais. Seu peso deslocou imperceptivelmente para a perna esquerda — posição de reação, não de ataque. Ainda não.</p>
+              <p><em>"Quarta sombra. Cais, seis horas. Flanqueando."</em> Voz abaixo do murmúrio do vento. Informação fria, sem alarme. O Capitão saberia o que fazer com ela.</p>
+              <p>Seus olhos voltaram para o símbolo. O olho dentro da coroa. <strong>Havia visto aquilo antes — num sonho, ou na lâmina de alguém que tentou matá-lo.</strong> Ainda não sabia qual seria pior de ser verdade.</p>
             </div>
           </div>
         </div>
 
-        <!-- WRITE -->
-        <div id="write-area">
-          <div class="write-header">
-            <span class="write-label">✍️ Escrever como: <span class="write-char-tag" id="active-char-tag">Ryuu Takamatsu</span></span>
-            <span class="autosave-indicator"><span class="autosave-dot"></span> Salvo automaticamente</span>
+        <!-- WRITE AREA -->
+        <div id="write-area" id="write-area-container">
+          <div class="write-hdr">
+            <span class="write-as">✍️ Escrever como: <span class="write-char-tag" id="active-char-tag">Ryuu Takamatsu</span></span>
+            <span class="autosave"><span class="autosave-dot"></span>Salvo automaticamente</span>
           </div>
           <div id="editor-container"><div id="editor"></div></div>
           <div class="write-footer">
-            <button class="dice-btn" onclick="openDiceModal()"><span class="dice-icon">🎲</span> Rolar Dados</button>
-            <button class="send-btn" onclick="sendPost()">Zarpar Post ⛵</button>
+            <button class="btn-dice" onclick="openDiceModal()"><span class="dice-wobble">🎲</span>Rolar Dados</button>
+            <button class="btn-send" onclick="sendPost()">Zarpar Post ⛵</button>
           </div>
         </div>
       </div>
 
       <!-- CHAR SHEET VIEW -->
-      <div class="view" id="char-sheet-view">
-        <div id="char-view">
-          <div class="char-sheet" id="char-sheet-content"></div>
+      <div id="view-char" class="view">
+        <div class="char-sheet" id="char-sheet-content"></div>
+      </div>
+
+      <!-- RULES VIEW -->
+      <div id="view-rules" class="view">
+        <div class="rules-content">
+          <div class="rules-title">📖 Regras da Campanha</div>
+          <div class="rules-sub">Combinados e diretrizes do grupo — válidos para todos os jogadores.</div>
+          <div class="rule-block">
+            <h3>⏱ Tempo de Post</h3>
+            <p>Cada jogador tem até 48 horas para responder após o post anterior. Caso não consiga postar, avise no grupo do Telegram. O Narrador pode avançar a cena após esse prazo.</p>
+          </div>
+          <div class="rule-block">
+            <h3>⚔️ Combate</h3>
+            <p>Rolagens de ataque usam 2d6 + modificador de atributo. Crítico acontece quando ambos os dados mostram 6. Falha crítica quando ambos mostram 1. O Narrador descreve as consequências.</p>
+          </div>
+          <div class="rule-block">
+            <h3>🎭 Interpretação</h3>
+            <p>Posts devem ter no mínimo 2 parágrafos. Ações físicas ficam em itálico. Diálogos entre aspas. Pensamentos em itálico entre asteriscos. Mantenha consistência com a personalidade do personagem estabelecida na ficha.</p>
+          </div>
+          <div class="rule-block">
+            <h3>☠️ Morte de Personagem</h3>
+            <p>Personagens podem morrer permanentemente. Quando o HP chega a 0, o jogador pode tentar um teste de Sobrevivência com 3d6. Resultado abaixo de 10 significa morte definitiva. O jogador poderá criar um novo personagem na sessão seguinte.</p>
+          </div>
+          <div class="rule-block">
+            <h3>🎲 Relógios (Blades in the Dark)</h3>
+            <p>Alguns eventos da narrativa são representados por relógios visíveis no painel da aventura. Quando um relógio positivo se completa, algo bom acontece para o grupo. Relógios negativos representam ameaças crescentes. O Narrador controla o avanço.</p>
+          </div>
         </div>
       </div>
 
-    </div>
+    </div><!-- /center -->
 
-    <button class="toggle-panel-btn" id="toggle-panel-btn" onclick="togglePanel()">◀</button>
+    <!-- PANEL TOGGLE BTN -->
+    <button class="toggle-panel" id="toggle-panel-btn" onclick="togglePanel()">◀</button>
 
     <!-- RIGHT PANEL -->
     <div id="right-panel">
-      <div class="right-panel-inner">
-        <div class="panel-section">
-          <div class="panel-section-title">🗺️ <span id="panel-adv-title">Aventura</span></div>
-          <div class="synopse-box" id="panel-synopse"></div>
+      <div class="rp-inner">
+        <div class="rp-section">
+          <div class="rp-title">🗺️ <span id="rp-adv-title">Aventura</span></div>
+          <div class="synopse-box" id="rp-synopse"></div>
         </div>
-        <div class="rope-divider"><div class="rope-line"></div><span class="rope-knot">⚓</span><div class="rope-line"></div></div>
-        <div class="panel-section">
-          <div class="panel-section-title">📖 Últimas Sessões</div>
-          <div id="panel-sessions"></div>
+        <div class="rope"><div class="rope-line"></div><span class="rope-knot">⚓</span><div class="rope-line"></div></div>
+        <div class="rp-section">
+          <div class="rp-title">📖 Últimas Sessões</div>
+          <div id="rp-sessions"></div>
+        </div>
+        <div class="rope"><div class="rope-line"></div><span class="rope-knot">⚓</span><div class="rope-line"></div></div>
+        <div class="rp-section" id="rp-clocks-section">
+          <div class="rp-title">
+            🕐 Relógios
+            <button class="narrator-only" onclick="openClockModal()" style="background:none;border:none;color:var(--gold-mid);font-size:0.8rem;cursor:pointer" title="Novo relógio">＋</button>
+          </div>
+          <div class="clocks-grid" id="clocks-grid">
+            <!-- Clocks rendered by JS -->
+          </div>
+          <button class="btn-add-clock narrator-only" onclick="openClockModal()">＋ Novo Relógio</button>
         </div>
       </div>
+    </div>
+  </div><!-- /main -->
+</div><!-- /screen-app -->
+
+<!-- ============================================================
+     MODALS
+============================================================ -->
+
+<!-- DELETE -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal-box danger-border" style="width:340px">
+    <div class="modal-title" style="color:var(--rum-light)">☠️ Apagar Post</div>
+    <div class="modal-sub">Esta ação não pode ser desfeita.<br>Digite <strong>"sim"</strong> para confirmar.</div>
+    <input type="text" class="delete-input" id="delete-input" placeholder='escreva "sim" aqui' oninput="checkDeleteInput()">
+    <div class="modal-btns">
+      <button class="mbtn ghost" onclick="closeModal('modal-delete')">Cancelar</button>
+      <button class="mbtn rum" id="confirm-delete-btn" onclick="confirmDelete()" disabled>Apagar</button>
     </div>
   </div>
 </div>
 
-<!-- DICE MODAL -->
-<div class="modal-overlay" id="dice-modal">
-  <div class="dice-modal">
+<!-- DICE -->
+<div class="modal-overlay" id="modal-dice">
+  <div class="modal-box" style="width:310px">
     <div class="modal-title">🎲 Rolar os Dados</div>
     <div class="dice-config">
       <button class="dice-count-btn" onclick="changeDiceCount(-1)">−</button>
-      <div class="dice-count-display" id="dice-count-display">2</div>
+      <div class="dice-count-num" id="dice-count-num">2</div>
       <button class="dice-count-btn" onclick="changeDiceCount(1)">+</button>
     </div>
-    <div class="dice-d6-label">dados de 6 lados (d6)</div>
-    <div class="dice-preview-row" id="dice-preview-row"></div>
+    <div class="dice-d6-lbl">dados de 6 lados (d6)</div>
+    <div class="dice-preview" id="dice-preview"></div>
     <div class="modal-btns">
-      <button class="modal-btn cancel" onclick="closeDiceModal()">Cancelar</button>
-      <button class="modal-btn roll" onclick="rollAndSendDice()">🎲 Rolar e Enviar</button>
+      <button class="mbtn ghost" onclick="closeModal('modal-dice')">Cancelar</button>
+      <button class="mbtn rum" onclick="rollAndSend()">🎲 Rolar e Enviar</button>
     </div>
   </div>
 </div>
 
-<!-- DELETE MODAL -->
-<div class="modal-overlay" id="delete-modal">
-  <div class="delete-modal">
-    <div class="delete-modal-title">☠️ Apagar Post</div>
-    <div class="delete-modal-sub">Esta ação não pode ser desfeita.<br>Digite <strong>"sim"</strong> para confirmar o apagamento.</div>
-    <input type="text" class="delete-confirm-input" id="delete-confirm-input" placeholder='escreva "sim" aqui' oninput="checkDeleteInput()">
+<!-- NPC -->
+<div class="modal-overlay" id="modal-npc">
+  <div class="modal-box" style="width:440px">
+    <div class="modal-title">🎭 Criar NPC</div>
+    <div class="field"><label>Nome</label><input type="text" id="npc-name" placeholder="Nome do personagem..."></div>
+    <div class="field"><label>Função / Tipo</label><input type="text" id="npc-role" placeholder="Ex: Mercador, Guarda, Vilão..."></div>
+    <div class="field"><label>Descrição breve</label><textarea id="npc-desc" rows="3" style="resize:vertical" placeholder="Aparência, personalidade, motivação..."></textarea></div>
+    <div class="npc-ai-note">✨ "Criar com IA" envia para o n8n e retorna uma ficha completa com história, atributos e segredos gerados automaticamente. Uma notificação será enviada quando estiver pronto.</div>
     <div class="modal-btns">
-      <button class="modal-btn cancel" onclick="closeDeleteModal()">Cancelar</button>
-      <button class="modal-btn danger" id="confirm-delete-btn" onclick="confirmDelete()" disabled>Apagar Post</button>
+      <button class="mbtn ghost" onclick="closeModal('modal-npc')">Cancelar</button>
+      <button class="mbtn foam" onclick="createNpcAI()">✨ Criar com IA</button>
+      <button class="mbtn gold" onclick="createNpc()">Criar</button>
     </div>
   </div>
 </div>
 
-<!-- ADD CHAR MODAL -->
-<div class="modal-overlay" id="add-char-modal">
-  <div class="add-char-modal">
+<!-- NARRATOR POST (note / warning) -->
+<div class="modal-overlay" id="modal-narrator-post">
+  <div class="modal-box" style="width:460px">
+    <div class="modal-title" id="narrator-post-title">📝 Post do Narrador</div>
+    <div class="post-type-select">
+      <button class="post-type-opt selected note" id="post-type-note" onclick="setNarratorPostType('note')">🔒 Nota Privada</button>
+      <button class="post-type-opt warning" id="post-type-warning" onclick="setNarratorPostType('warning')">📢 Aviso Público</button>
+    </div>
+    <div class="field"><label>Conteúdo</label><textarea id="narrator-post-text" rows="5" style="resize:vertical" placeholder="Escreva aqui..."></textarea></div>
+    <div class="modal-btns">
+      <button class="mbtn ghost" onclick="closeModal('modal-narrator-post')">Cancelar</button>
+      <button class="mbtn gold" onclick="sendNarratorPost()">Publicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLOCK -->
+<div class="modal-overlay" id="modal-clock">
+  <div class="modal-box" style="width:370px">
+    <div class="modal-title">🕐 Novo Relógio</div>
+    <div class="field"><label>Nome do Relógio</label><input type="text" id="clock-name" placeholder="Ex: Ameaça do Clã Ferro..."></div>
+    <div class="field"><label>Tipo</label></div>
+    <div class="clock-type-row">
+      <button class="clock-type-opt selected positive" id="ctype-positive" onclick="setClockType('positive')">✅ Positivo</button>
+      <button class="clock-type-opt negative" id="ctype-negative" onclick="setClockType('negative')">⚠️ Negativo</button>
+      <button class="clock-type-opt neutral" id="ctype-neutral" onclick="setClockType('neutral')">⬜ Neutro</button>
+    </div>
+    <div class="field"><label>Número de ticks</label>
+      <select id="clock-ticks" style="background:rgba(10,22,40,0.7);border:1px solid var(--border);border-radius:5px;color:var(--text-main);padding:8px 12px;width:100%;outline:none;">
+        <option value="4">4 ticks</option>
+        <option value="6" selected>6 ticks</option>
+        <option value="8">8 ticks</option>
+        <option value="10">10 ticks</option>
+        <option value="12">12 ticks</option>
+      </select>
+    </div>
+    <div class="field" style="display:flex;align-items:center;gap:10px">
+      <input type="checkbox" id="clock-visible" checked style="width:auto;accent-color:var(--gold)">
+      <label style="text-transform:none;letter-spacing:0;font-size:0.85rem;color:var(--text-main)">Visível para os jogadores</label>
+    </div>
+    <div class="modal-btns">
+      <button class="mbtn ghost" onclick="closeModal('modal-clock')">Cancelar</button>
+      <button class="mbtn gold" onclick="createClock()">Criar Relógio</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CHAR -->
+<div class="modal-overlay" id="modal-add-char">
+  <div class="modal-box" style="width:400px">
     <div class="modal-title">⚓ Adicionar Personagem</div>
-    <p style="color:var(--text-dim);font-size:0.85rem;text-align:center;margin-bottom:4px">Selecione um personagem do banco de dados</p>
+    <div class="modal-sub" style="margin-bottom:4px">Selecione um personagem do banco de dados</div>
     <div class="char-pick-list" id="char-pick-list">
       <div class="char-pick-item" onclick="pickChar(this,'char-serafin','🦅','Serafin Mares','Capitão Veterano','npc')">
-        <div class="char-pick-avatar">🦅</div><div class="char-pick-info"><h4>Serafin Mares</h4><p>Capitão Veterano • Neutro</p></div><span class="char-pick-type npc">NPC</span>
+        <div class="char-pick-av">🦅</div><div class="char-pick-info"><h4>Serafin Mares</h4><p>Capitão Veterano • Neutro</p></div><span class="char-pick-type npc">NPC</span>
       </div>
       <div class="char-pick-item" onclick="pickChar(this,'char-lena','🌙','Lena Dos Mares','Médica de Bordo','player')">
-        <div class="char-pick-avatar">🌙</div><div class="char-pick-info"><h4>Lena Dos Mares</h4><p>Médica de Bordo • Boa</p></div><span class="char-pick-type player">JOGADOR</span>
+        <div class="char-pick-av">🌙</div><div class="char-pick-info"><h4>Lena Dos Mares</h4><p>Médica de Bordo • Boa</p></div><span class="char-pick-type player">JOGADOR</span>
       </div>
       <div class="char-pick-item" onclick="pickChar(this,'char-rostock','⚒️','Barão Rostock','Ferreiro Anão','npc')">
-        <div class="char-pick-avatar">⚒️</div><div class="char-pick-info"><h4>Barão Rostock</h4><p>Ferreiro Anão • Caótico</p></div><span class="char-pick-type npc">NPC</span>
+        <div class="char-pick-av">⚒️</div><div class="char-pick-info"><h4>Barão Rostock</h4><p>Ferreiro Anão • Caótico</p></div><span class="char-pick-type npc">NPC</span>
       </div>
       <div class="char-pick-item" onclick="pickChar(this,'char-vela','🔮','Vela Obscura','Bruxa do Vazio','player')">
-        <div class="char-pick-avatar">🔮</div><div class="char-pick-info"><h4>Vela Obscura</h4><p>Bruxa do Vazio • Maligno</p></div><span class="char-pick-type player">JOGADOR</span>
+        <div class="char-pick-av">🔮</div><div class="char-pick-info"><h4>Vela Obscura</h4><p>Bruxa do Vazio • Maligno</p></div><span class="char-pick-type player">JOGADOR</span>
       </div>
     </div>
     <div class="modal-btns">
-      <button class="modal-btn cancel" style="flex:1" onclick="closeAddCharModal()">Cancelar</button>
-      <button class="modal-btn send" id="confirm-add-char" onclick="confirmAddChar()" disabled style="opacity:0.4;flex:2">✦ Adicionar</button>
+      <button class="mbtn ghost" onclick="closeModal('modal-add-char')">Cancelar</button>
+      <button class="mbtn gold" id="confirm-add-char-btn" onclick="confirmAddChar()" disabled style="opacity:0.35">✦ Adicionar</button>
     </div>
   </div>
 </div>
 
 <script>
-let panelOpen=false,diceCount=2,postToDelete=null,selectedCharToAdd=null;
-const addedChars={};
-let quill,currentLoggedUser='Capitão Nakama';
+/* ============================================================
+   STATE
+============================================================ */
+let currentRole = 'narrator'; // 'narrator' | 'player'
+let currentUser = 'Capitão Nakama';
+let panelOpen = false;
+let diceCount = 2;
+let postToDelete = null;
+let selectedCharToAdd = null;
+let narratorPostType = 'note';
+let clockType = 'positive';
+let sessionOpen = true;
+let addedChars = {};
+let quill;
 
-const adventures={
-  'adventure-1':{title:'A Ilha dos Tesouros',session:'Sessão 7 — Ativa',synopse:'Em algum lugar nos confins da Grand Line, o maior tesouro jamais reunido por um único pirata aguarda aquele capaz de decifrar três mapas fragmentados. A tripulação do Maru Salgado obteve o primeiro fragmento após semanas perseguindo o Clã Ferro — mas o preço foi alto. Com o navio avariado e suprimentos escassos, chegaram à Ilha dos Ossos: um lugar onde bússolas giram em círculos e os mapas param de funcionar.',sessions:[{num:'Sessão 5',text:'A tripulação rastreou o Clã Ferro até sua fortaleza flutuante e descobriu que o mapa era guardado por uma criatura que não deveria existir nos mares conhecidos.'},{num:'Sessão 6',text:'Durante a fuga, o Maru Salgado sofreu danos severos. Perderam suprimentos e um membro ficou aprisionado — vivo, mas nas mãos do inimigo.'},{num:'Sessão 7 (atual)',text:'Chegada ao Porto das Sombras. O mercador Krell revelou que o grupo já era esperado, e que alguém os vendeu antes mesmo de zarparem.'}]},
-  'adventure-2':{title:'O Porto Maldito',session:'Sessão 4 — Encerrada',synopse:'Uma missão de contrabando no Porto Nevoeiro revelou uma conspiração entre os guardas locais e uma guilda de assassinos. O grupo descobriu que o verdadeiro alvo era um dos seus — e que a teia de traições era mais funda do que qualquer um imaginava.',sessions:[{num:'Sessão 2',text:'A emboscada no armazém 7 resultou em três mortos e a revelação de que o informante era de dentro da própria guilda.'},{num:'Sessão 3',text:'Infiltração no cassino do Barão Vermelho. O grupo conseguiu o documento, mas Serafin foi reconhecido e a saída virou batalha.'},{num:'Sessão 4 (final)',text:'Confronto final com o Barão. O porto foi liberado, mas o mandante principal escapou por um túnel que ninguém sabia existir.'}]},
-  'adventure-3':{title:'Mar das Sombras',session:'Sessão 1 — Em breve',synopse:'Rumores de uma ilha que desaparece do mapa a cada lua cheia. Um navio fantasma avistado por três tripulações diferentes nas mesmas coordenadas. E um SOS captado em código morse que ninguém mais usa há cinquenta anos — transmitido de um barco que afundou em 1743.',sessions:[{num:'Sessão 0 (prep)',text:'Criação de personagens e ambientação. O grupo foi contratado por uma senhora de luto que não revelou seu nome completo — apenas que estava procurando alguém.'}]}
+/* ============================================================
+   ADVENTURE DATA
+============================================================ */
+const adventures = {
+  'adv-1': {
+    title: 'A Ilha dos Tesouros', session: 'Sessão 7 — Ativa', open: true,
+    synopse: 'Em algum lugar nos confins da Grand Line, o maior tesouro jamais reunido aguarda aquele que puder decifrar três mapas fragmentados. Com o navio avariado e suprimentos escassos, a tripulação chegou à Ilha dos Ossos — onde bússolas giram em círculos.',
+    sessions: [
+      { num: 'Sessão 5', text: 'A tripulação rastreou o Clã Ferro até sua fortaleza flutuante.' },
+      { num: 'Sessão 6', text: 'Fuga com danos severos. Um membro ficou aprisionado.' },
+      { num: 'Sessão 7 (atual)', text: 'Chegada ao Porto das Sombras. Krell revelou que já eram esperados.' }
+    ]
+  },
+  'adv-2': {
+    title: 'O Porto Maldito', session: 'Sessão 4 — Encerrada', open: false,
+    synopse: 'Uma missão de contrabando no Porto Nevoeiro revelou conspiração entre guardas e uma guilda de assassinos. O verdadeiro alvo era um dos membros do grupo.',
+    sessions: [
+      { num: 'Sessão 2', text: 'Emboscada no armazém 7. O informante era de dentro.' },
+      { num: 'Sessão 3', text: 'Infiltração no cassino do Barão Vermelho.' },
+      { num: 'Sessão 4', text: 'Confronto final. Porto liberado, mandante escapou.' }
+    ]
+  },
+  'adv-3': {
+    title: 'Mar das Sombras', session: 'Sessão 1 — Em breve', open: false,
+    synopse: 'Uma ilha que some do mapa a cada lua cheia. Um navio fantasma avistado nas mesmas coordenadas por três tripulações. Um SOS em código morse que ninguém usa há 50 anos.',
+    sessions: [{ num: 'Sessão 0 (prep)', text: 'Criação de personagens. Contratados por uma senhora de luto sem nome.' }]
+  }
 };
 
-const characters={
-  'my-char':{avatar:'🐾',name:'Ryuu Takamatsu',role:'Espadachim Errante • Lv. 5',player:'Capitão Nakama',isMe:true,hp:32,hpMax:44,stats:[{n:'Força',v:14},{n:'Destreza',v:18},{n:'Constituição',v:12},{n:'Inteligência',v:10},{n:'Sabedoria',v:15},{n:'Carisma',v:9}],abilities:[{n:'Lâmina Fantasma',d:'Ataque com 3d6 ignorando 2 de armadura'},{n:'Passo Silencioso',d:'+4 em furtividade, sem penalidade de terreno'},{n:'Sexto Sentido',d:'Não pode ser surpreendido. Percepção passiva 18'},{n:'Corte do Vento',d:'1x/cena, ataca todos os inimigos adjacentes'}],inventory:[{n:'Katana de Jade',d:'2d8 cortante, +1 mágico'},{n:'Manto das Sombras',d:'+2 CA, invisibilidade 1x/dia'},{n:'Pedra da Maré',d:'Resiste 10 de dano de água'}]},
-  'char-mira':{avatar:'🔥',name:'Mira Ashford',role:'Alquimista de Combate • Lv. 5',player:'FireNavigator',hp:28,hpMax:36,stats:[{n:'Força',v:10},{n:'Destreza',v:14},{n:'Constituição',v:11},{n:'Inteligência',v:19},{n:'Sabedoria',v:13},{n:'Carisma',v:12}],abilities:[{n:'Explosão Alquímica',d:'2d10 de fogo numa área de 5m'},{n:'Elixir Rápido',d:'Cura 1d8+4 como ação bônus'},{n:'Névoa Cáustica',d:'Nuvem que causa 1d4 por turno'}],inventory:[{n:'Kit de Alquimia',d:'Cria poções e explosivos'},{n:'Bestas Duplas',d:'2d4 perfurante'}]},
-  'char-krell':{avatar:'🧓',name:'Mercador Krell',role:'Informante Misterioso',player:'NPC — Mestre Odessa',isNPC:true,hp:18,hpMax:24,stats:[{n:'Força',v:9},{n:'Destreza',v:12},{n:'Constituição',v:10},{n:'Inteligência',v:17},{n:'Sabedoria',v:18},{n:'Carisma',v:15}],abilities:[{n:'Rede de Contatos',d:'Sabe de qualquer rumor do porto em 1d4 horas'},{n:'Rosto Sem Nome',d:'+6 em enganação e disfarce'}],inventory:[{n:'Mapa Fragmentado',d:'Rota para local desconhecido'},{n:'Faca Oculta',d:'1d4 perfurante, surpresa'}]}
+/* ============================================================
+   CHARACTER DATA
+============================================================ */
+const characters = {
+  'my-char': {
+    avatar:'🐾', name:'Ryuu Takamatsu', role:'Espadachim Errante • Lv.5',
+    player:'Capitão Nakama', isMe:true, status:'alive',
+    hp:32, hpMax:44,
+    stats:[{n:'Força',v:14},{n:'Destreza',v:18},{n:'Const.',v:12},{n:'Intel.',v:10},{n:'Sabedoria',v:15},{n:'Carisma',v:9}],
+    abilities:[{n:'Lâmina Fantasma',d:'3d6, ignora 2 de armadura'},{n:'Passo Silencioso',d:'+4 furtividade'},{n:'Sexto Sentido',d:'Não pode ser surpreendido'},{n:'Corte do Vento',d:'1x/cena, ataca todos adjacentes'}],
+    inventory:[{n:'Katana de Jade',d:'2d8 +1 mágico'},{n:'Manto das Sombras',d:'+2 CA, invisível 1x/dia'},{n:'Pedra da Maré',d:'Resist. 10 água'}]
+  },
+  'char-mira': {
+    avatar:'🔥', name:'Mira Ashford', role:'Alquimista • Lv.5',
+    player:'FireNavigator', status:'alive',
+    hp:28, hpMax:36,
+    stats:[{n:'Força',v:10},{n:'Destreza',v:14},{n:'Const.',v:11},{n:'Intel.',v:19},{n:'Sabedoria',v:13},{n:'Carisma',v:12}],
+    abilities:[{n:'Explosão Alquímica',d:'2d10 fogo, área 5m'},{n:'Elixir Rápido',d:'Cura 1d8+4 bônus'},{n:'Névoa Cáustica',d:'1d4/turno'}],
+    inventory:[{n:'Kit de Alquimia',d:'Cria poções e explosivos'},{n:'Bestas Duplas',d:'2d4 perfurante'}]
+  },
+  'char-krell': {
+    avatar:'🧓', name:'Mercador Krell', role:'Informante Misterioso',
+    player:'NPC — Mestre', isNPC:true, status:'alive',
+    hp:18, hpMax:24,
+    stats:[{n:'Força',v:9},{n:'Destreza',v:12},{n:'Const.',v:10},{n:'Intel.',v:17},{n:'Sabedoria',v:18},{n:'Carisma',v:15}],
+    abilities:[{n:'Rede de Contatos',d:'Rumores em 1d4 horas'},{n:'Rosto Sem Nome',d:'+6 enganação e disfarce'}],
+    inventory:[{n:'Mapa Fragmentado',d:'Rota desconhecida'},{n:'Faca Oculta',d:'1d4 surpresa'}]
+  }
 };
 
-window.addEventListener('DOMContentLoaded',()=>{
-  quill=new Quill('#editor',{theme:'snow',placeholder:'Escreva a ação do seu personagem...',modules:{toolbar:[['bold','italic','underline'],['blockquote'],['clean']]}});
-  quill.on('text-change',()=>{try{sessionStorage.setItem('draft_post',quill.root.innerHTML);}catch(e){}});
-  try{const d=sessionStorage.getItem('draft_post');if(d&&d!=='<p><br></p>')quill.root.innerHTML=d;}catch(e){}
+/* ============================================================
+   CLOCKS DATA (initial mock)
+============================================================ */
+let clocks = [
+  { id:'clk-1', name:'Ameaça do Clã Ferro', type:'negative', ticks:6, filled:3, visible:true },
+  { id:'clk-2', name:'Confiança de Krell', type:'positive', ticks:4, filled:1, visible:true },
+  { id:'clk-3', name:'Segredo da Ilha', type:'neutral', ticks:8, filled:5, visible:false }
+];
+
+/* ============================================================
+   INIT
+============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  quill = new Quill('#editor', {
+    theme: 'snow',
+    placeholder: 'Escreva a ação do seu personagem...',
+    modules: { toolbar: [['bold','italic','underline'],['blockquote'],['clean']] }
+  });
+  quill.on('text-change', () => {
+    try { sessionStorage.setItem('draft', quill.root.innerHTML); } catch(e) {}
+  });
+  try {
+    const d = sessionStorage.getItem('draft');
+    if (d && d !== '<p><br></p>') quill.root.innerHTML = d;
+  } catch(e) {}
+
+  renderClocks();
+  applyRole();
+  // Default: open adventure 1 panel
+  const adv = adventures['adv-1'];
+  fillPanel(adv);
 });
 
-function doLogin(){
-  const u=document.getElementById('login-user').value.trim();
-  if(!u)return;
-  currentLoggedUser=u;
-  document.getElementById('nav-username').textContent=u;
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='flex';
-  showToast('⚓ Bem-vindo a bordo, '+u+'!');
-}
-document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-function doLogout(){document.getElementById('login-screen').style.display='flex';document.getElementById('app').style.display='none';showPlaceholder();}
-
-function hideAllViews(){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));}
-function showPlaceholder(){hideAllViews();document.getElementById('placeholder-view').classList.add('active');document.querySelectorAll('.sidebar-item,.char-sidebar-item').forEach(e=>e.classList.remove('active'));if(panelOpen)togglePanel();}
-
-function selectAdventure(id,el){
-  document.querySelectorAll('.sidebar-item,.char-sidebar-item').forEach(e=>e.classList.remove('active'));
-  if(el)el.classList.add('active');
-  hideAllViews();
-  document.getElementById('forum-view').classList.add('active');
-  const adv=adventures[id];
-  if(adv){
-    document.getElementById('forum-session-title').textContent='⚓ '+adv.title;
-    document.getElementById('forum-session-sub').textContent=adv.session;
-    document.getElementById('panel-adv-title').textContent=adv.title;
-    document.getElementById('panel-synopse').textContent=adv.synopse;
-    document.getElementById('panel-sessions').innerHTML=adv.sessions.map(s=>`<div class="session-log-item"><div class="session-log-num">${s.num}</div><div class="session-log-text">${s.text}</div></div>`).join('');
-  }
-  if(!panelOpen)togglePanel();
+/* ============================================================
+   SCREENS
+============================================================ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-function selectChar(id,el){
-  document.querySelectorAll('.sidebar-item,.char-sidebar-item').forEach(e=>e.classList.remove('active'));
-  if(el)el.classList.add('active');
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  if (!u) return;
+  currentUser = u;
+  document.getElementById('nav-username').textContent = u;
+  showScreen('screen-app');
+  showToast('⚓ Bem-vindo a bordo, ' + u + '!');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('screen-login').classList.contains('active')) doLogin();
+});
+
+function doRegister() {
+  const u = document.getElementById('reg-user').value.trim();
+  if (!u) { showToast('⚠️ Preencha todos os campos'); return; }
+  showScreen('screen-pending');
+  showToast('✅ Pedido enviado!');
+}
+
+function doLogout() {
+  showScreen('screen-login');
   hideAllViews();
-  document.getElementById('char-sheet-view').classList.add('active');
-  if(panelOpen)togglePanel();
-  const c=characters[id];if(!c)return;
-  const hpPct=Math.round((c.hp/c.hpMax)*100);
-  const npcTag=c.isNPC?'<span style="margin-left:8px;font-size:0.7rem;font-family:Cinzel,serif;color:var(--foam);border:1px solid rgba(184,212,232,0.4);border-radius:3px;padding:1px 7px">NPC</span>':'';
-  document.getElementById('char-sheet-content').innerHTML=`
-    <div class="char-sheet-header">
-      <div class="char-big-avatar">${c.avatar}</div>
-      <div class="char-info"><h2>${c.name}${npcTag}</h2><p>${c.role}</p><p style="color:var(--gold-mid);margin-top:4px;font-size:0.8rem">Jogador: ${c.player}</p></div>
+}
+
+/* ============================================================
+   ROLE SWITCHER (mock only)
+============================================================ */
+function setRole(role) {
+  currentRole = role;
+  document.getElementById('role-btn-narrator').classList.toggle('active', role === 'narrator');
+  document.getElementById('role-btn-player').classList.toggle('active', role === 'player');
+  document.getElementById('nav-role-tag').textContent = role === 'narrator' ? 'Narrador' : 'Jogador';
+  document.getElementById('nav-role-tag').style.background = role === 'narrator' ? 'rgba(122,92,0,0.3)' : 'rgba(21,128,61,0.2)';
+  document.getElementById('nav-role-tag').style.color = role === 'narrator' ? 'var(--gold)' : 'var(--green-light)';
+  document.getElementById('nav-role-tag').style.borderColor = role === 'narrator' ? 'var(--gold-deep)' : 'rgba(21,128,61,0.4)';
+  applyRole();
+  showToast(role === 'narrator' ? '🎭 Modo Narrador ativado' : '⚔️ Modo Jogador ativado');
+}
+
+function applyRole() {
+  const isNarrator = currentRole === 'narrator';
+  document.querySelectorAll('.narrator-only').forEach(el => {
+    el.style.display = isNarrator ? '' : 'none';
+  });
+  // write area only when session open OR narrator
+  const writeArea = document.getElementById('write-area');
+  if (writeArea) writeArea.style.display = (sessionOpen || isNarrator) ? '' : 'none';
+}
+
+/* ============================================================
+   VIEW MANAGEMENT
+============================================================ */
+function hideAllViews() {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+}
+function showView(id) {
+  hideAllViews();
+  document.getElementById(id).classList.add('active');
+}
+function clearSidebarActive() {
+  document.querySelectorAll('.sb-item,.sb-char-item,.sb-rules-item').forEach(e => e.classList.remove('active'));
+}
+
+/* ============================================================
+   SELECT ADVENTURE
+============================================================ */
+function selectAdventure(id, el) {
+  clearSidebarActive();
+  if (el) el.classList.add('active');
+  showView('view-forum');
+  const adv = adventures[id];
+  if (!adv) return;
+  document.getElementById('forum-title').textContent = '⚓ ' + adv.title;
+  document.getElementById('forum-sub').textContent = adv.session;
+  // session open/closed state
+  sessionOpen = adv.open;
+  const closedBar = document.getElementById('session-closed-bar');
+  const openBtn = document.getElementById('btn-open-session');
+  const closeBtn = document.getElementById('btn-close-session');
+  closedBar.style.display = adv.open ? 'none' : 'flex';
+  if (openBtn) openBtn.style.display = adv.open ? 'none' : 'flex';
+  if (closeBtn) closeBtn.style.display = adv.open ? 'flex' : 'none';
+  applyRole();
+  fillPanel(adv);
+  if (!panelOpen) togglePanel();
+  // scroll to bottom
+  setTimeout(() => {
+    const pa = document.getElementById('posts-area');
+    if (pa) pa.scrollTop = pa.scrollHeight;
+  }, 50);
+}
+
+function fillPanel(adv) {
+  document.getElementById('rp-adv-title').textContent = adv.title;
+  document.getElementById('rp-synopse').textContent = adv.synopse;
+  document.getElementById('rp-sessions').innerHTML = adv.sessions.map(s =>
+    `<div class="session-log"><div class="session-log-num">${s.num}</div><div class="session-log-text">${s.text}</div></div>`
+  ).join('');
+}
+
+/* ============================================================
+   SESSION OPEN / CLOSE
+============================================================ */
+function toggleSession(open) {
+  sessionOpen = open;
+  const closedBar = document.getElementById('session-closed-bar');
+  const openBtn = document.getElementById('btn-open-session');
+  const closeBtn = document.getElementById('btn-close-session');
+  closedBar.style.display = open ? 'none' : 'flex';
+  document.getElementById('session-closed-date').textContent = open ? '' : 'Encerrada agora';
+  if (openBtn) openBtn.style.display = open ? 'none' : 'flex';
+  if (closeBtn) closeBtn.style.display = open ? 'flex' : 'none';
+  applyRole();
+  showToast(open ? '▶ Sessão aberta!' : '■ Sessão encerrada');
+}
+
+/* ============================================================
+   SELECT CHARACTER
+============================================================ */
+function selectChar(id, el) {
+  clearSidebarActive();
+  if (el) el.classList.add('active');
+  showView('view-char');
+  if (panelOpen) togglePanel();
+  const c = characters[id];
+  if (!c) return;
+  const hpPct = Math.round((c.hp / c.hpMax) * 100);
+  const npcTag = c.isNPC ? `<span style="margin-left:8px;font-size:0.65rem;font-family:Cinzel,serif;color:var(--foam);border:1px solid rgba(184,212,232,0.3);border-radius:3px;padding:1px 6px">NPC</span>` : '';
+  const statusCls = c.status === 'alive' ? 'alive' : 'dead';
+  const statusLbl = c.status === 'alive' ? '⚔️ Ativo' : '☠️ Morto';
+  const narratorBar = currentRole === 'narrator' ? `
+    <div class="char-narrator-bar">
+      <button class="mbtn gold" style="flex:0;padding:6px 14px;font-size:0.62rem" onclick="showToast('📝 Editar ficha — em breve')">✏️ Editar Ficha</button>
+      <button class="mbtn rum" style="flex:0;padding:6px 14px;font-size:0.62rem" onclick="showToast('☠️ Marcar como morto — em breve')">☠️ Matar</button>
+    </div>` : '';
+  document.getElementById('char-sheet-content').innerHTML = `
+    <div class="char-sheet-hdr">
+      <div class="char-big-av">${c.avatar}</div>
+      <div class="char-sheet-info">
+        <h2>${c.name}${npcTag}</h2>
+        <p>${c.role}</p>
+        <p style="color:var(--gold-mid);margin-top:3px;font-size:0.78rem">Jogador: ${c.player}</p>
+        <div class="char-status"><span class="char-status-badge ${statusCls}">${statusLbl}</span></div>
+      </div>
     </div>
     <div class="char-body">
-      <div><div class="char-section-title">❤️ Pontos de Vida</div><div class="hp-bar-wrap"><div class="hp-bar-label"><span>HP</span><span>${c.hp} / ${c.hpMax}</span></div><div class="hp-bar"><div class="hp-fill" style="width:${hpPct}%"></div></div></div></div>
-      <div><div class="char-section-title">⚔️ Atributos</div><div class="stats-grid">${c.stats.map(s=>`<div class="stat-box"><div class="stat-name">${s.n}</div><div class="stat-val">${s.v}</div></div>`).join('')}</div></div>
-      <div><div class="char-section-title">✨ Habilidades</div><ul class="ability-list">${c.abilities.map(a=>`<li><span class="ability-name">${a.n}</span><span class="ability-desc">${a.d}</span></li>`).join('')}</ul></div>
-      ${c.inventory?`<div><div class="char-section-title">🎒 Inventário</div><ul class="ability-list">${c.inventory.map(a=>`<li><span class="ability-name">${a.n}</span><span class="ability-desc">${a.d}</span></li>`).join('')}</ul></div>`:''}
-    </div>`;
+      <div>
+        <div class="cs-title">❤️ Pontos de Vida</div>
+        <div class="hp-bar-wrap">
+          <div class="hp-bar-lbl"><span>HP</span><span>${c.hp} / ${c.hpMax}</span></div>
+          <div class="hp-bar"><div class="hp-fill" style="width:${hpPct}%"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="cs-title">⚔️ Atributos</div>
+        <div class="stats-grid">${c.stats.map(s=>`<div class="stat-box"><div class="stat-name">${s.n}</div><div class="stat-val">${s.v}</div></div>`).join('')}</div>
+      </div>
+      <div>
+        <div class="cs-title">✨ Habilidades</div>
+        <ul class="ability-list">${c.abilities.map(a=>`<li><span class="ab-name">${a.n}</span><span class="ab-desc">${a.d}</span></li>`).join('')}</ul>
+      </div>
+      ${c.inventory ? `<div><div class="cs-title">🎒 Inventário</div><ul class="ability-list">${c.inventory.map(a=>`<li><span class="ab-name">${a.n}</span><span class="ab-desc">${a.d}</span></li>`).join('')}</ul></div>` : ''}
+    </div>
+    ${narratorBar}
+  `;
 }
 
-function togglePanel(){
-  panelOpen=!panelOpen;
-  const panel=document.getElementById('right-panel');
-  const btn=document.getElementById('toggle-panel-btn');
-  panel.classList.toggle('open',panelOpen);
-  btn.textContent=panelOpen?'▶':'◀';
-  btn.style.right=panelOpen?'280px':'0';
+/* ============================================================
+   RULES
+============================================================ */
+function selectRules(el) {
+  clearSidebarActive();
+  if (el) el.classList.add('active');
+  showView('view-rules');
+  if (panelOpen) togglePanel();
 }
 
-function sendPost(){
-  if(!quill)return;
-  const content=quill.root.innerHTML;
-  if(content==='<p><br></p>'||!content.trim()){showToast('⚠️ Escreva algo antes de zarpar!');return;}
-  const id='post-dyn-'+Date.now();
-  const card=document.createElement('div');
-  card.className='post-card my-post';card.id=id;
-  card.innerHTML=`<button class="post-delete-btn" onclick="askDeletePost('${id}')">✕</button><div class="post-header"><div class="post-avatar">🐾</div><div class="post-meta"><div class="post-names"><span class="post-player">${currentLoggedUser.toUpperCase()}</span><span class="post-sep">▸</span><span class="post-char">Ryuu Takamatsu</span></div><div class="post-time">agora</div></div></div><div class="post-body">${content}</div>`;
-  const pa=document.getElementById('posts-area');pa.appendChild(card);pa.scrollTop=pa.scrollHeight;
-  quill.setContents([]);try{sessionStorage.removeItem('draft_post');}catch(e){}
+/* ============================================================
+   PANEL
+============================================================ */
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('right-panel').classList.toggle('open', panelOpen);
+  const btn = document.getElementById('toggle-panel-btn');
+  btn.textContent = panelOpen ? '▶' : '◀';
+  btn.style.right = panelOpen ? '272px' : '0';
+}
+
+/* ============================================================
+   SEND POST
+============================================================ */
+function sendPost() {
+  if (!quill) return;
+  const content = quill.root.innerHTML;
+  if (content === '<p><br></p>' || !content.trim()) { showToast('⚠️ Escreva algo primeiro!'); return; }
+  const id = 'post-dyn-' + Date.now();
+  const card = document.createElement('div');
+  card.className = 'post-card my-post';
+  card.id = id;
+  card.innerHTML = `
+    <button class="post-delete-btn" onclick="askDeletePost('${id}')">✕</button>
+    <div class="post-hdr">
+      <div class="post-avatar">🐾</div>
+      <div class="post-meta">
+        <div class="post-names"><span class="post-player">${currentUser.toUpperCase()}</span><span class="post-sep">▸</span><span class="post-char">Ryuu Takamatsu</span></div>
+        <div class="post-time">agora</div>
+      </div>
+    </div>
+    <div class="post-body">${content}</div>`;
+  const pa = document.getElementById('posts-area');
+  pa.appendChild(card);
+  pa.scrollTop = pa.scrollHeight;
+  quill.setContents([]);
+  try { sessionStorage.removeItem('draft'); } catch(e) {}
   showToast('⛵ Post enviado!');
 }
 
-function askDeletePost(id){
-  postToDelete=id;
-  document.getElementById('delete-confirm-input').value='';
-  document.getElementById('confirm-delete-btn').disabled=true;
-  document.getElementById('delete-modal').classList.add('open');
-  setTimeout(()=>document.getElementById('delete-confirm-input').focus(),100);
+/* ============================================================
+   DELETE POST
+============================================================ */
+function askDeletePost(id) {
+  postToDelete = id;
+  document.getElementById('delete-input').value = '';
+  document.getElementById('confirm-delete-btn').disabled = true;
+  openModal('modal-delete');
+  setTimeout(() => document.getElementById('delete-input').focus(), 100);
 }
-function checkDeleteInput(){
-  const v=document.getElementById('delete-confirm-input').value.trim().toLowerCase();
-  const btn=document.getElementById('confirm-delete-btn');
-  btn.disabled=v!=='sim';btn.style.opacity=v==='sim'?'1':'0.3';
+function checkDeleteInput() {
+  const v = document.getElementById('delete-input').value.trim().toLowerCase();
+  const btn = document.getElementById('confirm-delete-btn');
+  btn.disabled = v !== 'sim';
+  btn.style.opacity = v === 'sim' ? '1' : '0.3';
 }
-function closeDeleteModal(){document.getElementById('delete-modal').classList.remove('open');postToDelete=null;}
-function confirmDelete(){
-  if(!postToDelete)return;
-  const el=document.getElementById(postToDelete);
-  if(el){el.style.transition='opacity 0.3s,transform 0.3s';el.style.opacity='0';el.style.transform='translateX(20px)';setTimeout(()=>el.remove(),310);}
-  closeDeleteModal();showToast('🗑️ Post apagado.');
+function confirmDelete() {
+  if (!postToDelete) return;
+  const el = document.getElementById(postToDelete);
+  if (el) { el.style.transition = 'opacity 0.3s,transform 0.3s'; el.style.opacity = '0'; el.style.transform = 'translateX(16px)'; setTimeout(() => el.remove(), 320); }
+  closeModal('modal-delete');
+  showToast('🗑️ Post apagado.');
 }
 
-function openDiceModal(){
-  diceCount=2;
-  document.getElementById('dice-count-display').textContent=diceCount;
+/* ============================================================
+   DICE
+============================================================ */
+function openDiceModal() {
+  diceCount = 2;
+  document.getElementById('dice-count-num').textContent = diceCount;
   updateDicePreview();
-  document.getElementById('dice-modal').classList.add('open');
+  openModal('modal-dice');
 }
-function closeDiceModal(){document.getElementById('dice-modal').classList.remove('open');}
-function changeDiceCount(d){
-  diceCount=Math.max(1,Math.min(8,diceCount+d));
-  document.getElementById('dice-count-display').textContent=diceCount;
+function changeDiceCount(d) {
+  diceCount = Math.max(1, Math.min(8, diceCount + d));
+  document.getElementById('dice-count-num').textContent = diceCount;
   updateDicePreview();
 }
-const diceFaces=['⚀','⚁','⚂','⚃','⚄','⚅'];
-function updateDicePreview(){
-  const row=document.getElementById('dice-preview-row');
-  row.innerHTML='';
-  for(let i=0;i<diceCount;i++){
-    const d=document.createElement('div');d.className='die-preview';d.textContent='⬡';row.appendChild(d);
+function updateDicePreview() {
+  const row = document.getElementById('dice-preview');
+  row.innerHTML = '';
+  for (let i = 0; i < diceCount; i++) {
+    const d = document.createElement('div'); d.className = 'die-ghost'; d.textContent = '⬡'; row.appendChild(d);
   }
 }
-function buildDicePostHTML(results,count){
-  const total=results.reduce((a,b)=>a+b,0);
-  const maxVal=Math.max(...results);
-  const facesHTML=results.map(v=>{
-    const isMax=v===maxVal;
-    return `<div class="die-box${isMax?' die-max':''}">${diceFaces[v-1]}</div>`;
+const diceFaces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+function rollAndSend() {
+  const results = [];
+  for (let i = 0; i < diceCount; i++) results.push(Math.floor(Math.random() * 6) + 1);
+  const total = results.reduce((a,b) => a+b, 0);
+  const maxVal = Math.max(...results);
+  const dc = diceCount;
+  closeModal('modal-dice');
+  const facesHTML = results.map(v => `<div class="die-box${v===maxVal?' die-max':''}">${diceFaces[v-1]}</div>`).join('');
+  const maxTag = maxVal === 6 ? ' &nbsp;⚡ Máximo!' : '';
+  const id = 'post-dyn-' + Date.now();
+  const card = document.createElement('div');
+  card.className = 'post-card'; card.id = id;
+  card.innerHTML = `
+    <div class="post-hdr">
+      <div class="post-avatar">🎲</div>
+      <div class="post-meta">
+        <div class="post-names"><span class="post-player">${currentUser.toUpperCase()}</span><span class="post-sep">▸</span><span class="post-char">Rolagem de Dados</span></div>
+        <div class="post-time">agora</div>
+      </div>
+    </div>
+    <div class="dice-post-body">
+      <div class="dice-post-label">🎲 ${dc}d6</div>
+      <div class="dice-faces">${facesHTML}</div>
+      <div class="dice-total">Total: <strong>${total}</strong>${maxTag}</div>
+    </div>`;
+  const pa = document.getElementById('posts-area');
+  pa.appendChild(card);
+  pa.scrollTop = pa.scrollHeight;
+  showToast(`🎲 ${dc}d6 → ${total}`);
+}
+
+/* ============================================================
+   NARRATOR TOOLS
+============================================================ */
+function openNpcModal() { openModal('modal-npc'); }
+function createNpc() {
+  const name = document.getElementById('npc-name').value.trim();
+  if (!name) { showToast('⚠️ Digite um nome'); return; }
+  const role = document.getElementById('npc-role').value.trim() || 'NPC';
+  // Add to sidebar
+  addCharToSidebar('npc-' + Date.now(), '🎭', name, role, 'npc');
+  closeModal('modal-npc');
+  document.getElementById('npc-name').value = '';
+  document.getElementById('npc-role').value = '';
+  document.getElementById('npc-desc').value = '';
+  showToast(`🎭 ${name} criado!`);
+}
+function createNpcAI() {
+  const name = document.getElementById('npc-name').value.trim() || 'NPC sem nome';
+  closeModal('modal-npc');
+  showToast('✨ Enviado para a IA! Aguarde notificação...');
+  // Simulate async response
+  setTimeout(() => showToast(`🤖 IA terminou! "${name}" está pronto.`), 3500);
+}
+
+function openNarratorPostModal(type) {
+  narratorPostType = type;
+  setNarratorPostType(type);
+  openModal('modal-narrator-post');
+}
+function setNarratorPostType(type) {
+  narratorPostType = type;
+  document.getElementById('post-type-note').className = 'post-type-opt' + (type==='note'?' selected note':'');
+  document.getElementById('post-type-warning').className = 'post-type-opt' + (type==='warning'?' selected warning':'');
+  document.getElementById('narrator-post-title').textContent = type === 'note' ? '🔒 Nota Privada' : '📢 Aviso Público';
+}
+function sendNarratorPost() {
+  const text = document.getElementById('narrator-post-text').value.trim();
+  if (!text) { showToast('⚠️ Escreva algo primeiro'); return; }
+  const isNote = narratorPostType === 'note';
+  const id = 'post-dyn-' + Date.now();
+  const card = document.createElement('div');
+  card.className = 'post-card ' + (isNote ? 'narrator-note narrator-only' : 'public-warning');
+  card.id = id;
+  card.innerHTML = `
+    <div class="post-hdr">
+      <div class="post-avatar" style="border-color:${isNote?'var(--gold-deep)':'rgba(196,56,0,0.6)'}">${isNote?'🔒':'📢'}</div>
+      <div class="post-meta">
+        <div class="post-names"><span class="post-player" style="color:${isNote?'var(--gold-mid)':'#fca5a5'}">${currentUser.toUpperCase()}</span><span class="post-sep">▸</span><span class="post-char" style="color:${isNote?'var(--gold-light)':'#fca5a5'}">${isNote?'Nota Privada':'Aviso ao Grupo'}</span></div>
+        <div class="post-time">agora</div>
+      </div>
+      <span class="post-type-tag ${isNote?'note':'warning'}">${isNote?'NOTA':'AVISO'}</span>
+    </div>
+    <div class="post-body"><p>${text.replace(/\n/g,'</p><p>')}</p></div>`;
+  if (isNote) card.style.display = currentRole === 'narrator' ? '' : 'none';
+  const pa = document.getElementById('posts-area');
+  pa.appendChild(card);
+  pa.scrollTop = pa.scrollHeight;
+  closeModal('modal-narrator-post');
+  document.getElementById('narrator-post-text').value = '';
+  showToast(isNote ? '🔒 Nota adicionada' : '📢 Aviso publicado');
+}
+
+/* ============================================================
+   CLOCKS
+============================================================ */
+function renderClocks() {
+  const grid = document.getElementById('clocks-grid');
+  if (!grid) return;
+  const isNarrator = currentRole === 'narrator';
+  const visible = clocks.filter(c => c.visible || isNarrator);
+  grid.innerHTML = visible.map(c => {
+    const ticks = Array.from({length: c.ticks}, (_, i) => {
+      const filled = i < c.filled ? ' filled ' + c.type : '';
+      const clickAttr = isNarrator ? `onclick="tickClock('${c.id}',${i})"` : '';
+      return `<div class="clock-tick${filled}" ${clickAttr}></div>`;
+    }).join('');
+    const hiddenTag = !c.visible ? `<div class="clock-hidden-tag">👁 Oculto dos jogadores</div>` : '';
+    return `
+      <div class="clock-item">
+        <div class="clock-hdr">
+          <span class="clock-name">${c.name}</span>
+          <span class="clock-type-dot ${c.type}"></span>
+        </div>
+        <div class="clock-wheel">${ticks}</div>
+        ${hiddenTag}
+      </div>`;
   }).join('');
-  return `<div class="dice-roll-post">
-    <div class="dice-roll-header">🎲 ${count}d6</div>
-    <div class="dice-faces-row">${facesHTML}</div>
-    <div class="dice-roll-total">Total: <strong>${total}</strong>${maxVal===6?' — <span style="color:var(--gold);font-size:0.75rem;font-family:Cinzel,serif">⚡ Máximo!</span>':''}</div>
-  </div>`;
-}
-function rollAndSendDice(){
-  const results=[];
-  for(let i=0;i<diceCount;i++)results.push(Math.floor(Math.random()*6)+1);
-  const total=results.reduce((a,b)=>a+b,0);
-  const dc=diceCount;
-  closeDiceModal();
-  const pa=document.getElementById('posts-area');
-  const card=document.createElement('div');
-  card.className='post-card';
-  card.innerHTML=`<div class="post-header"><div class="post-avatar">🎲</div><div class="post-meta"><div class="post-names"><span class="post-player">${currentLoggedUser.toUpperCase()}</span><span class="post-sep">▸</span><span class="post-char">Rolagem de Dados</span></div><div class="post-time">agora</div></div></div>${buildDicePostHTML(results,dc)}`;
-  pa.appendChild(card);pa.scrollTop=pa.scrollHeight;
-  showToast(`🎲 ${dc}d6 → Total: ${total}`);
-}
-function openAddCharModal(){selectedCharToAdd=null;document.querySelectorAll('.char-pick-item').forEach(e=>e.classList.remove('selected'));document.getElementById('confirm-add-char').disabled=true;document.getElementById('confirm-add-char').style.opacity='0.4';document.getElementById('add-char-modal').classList.add('open');}
-function closeAddCharModal(){document.getElementById('add-char-modal').classList.remove('open');}
-function pickChar(el,id,emoji,name,role,type){document.querySelectorAll('.char-pick-item').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedCharToAdd={id,emoji,name,role,type};document.getElementById('confirm-add-char').disabled=false;document.getElementById('confirm-add-char').style.opacity='1';}
-function confirmAddChar(){
-  if(!selectedCharToAdd)return;
-  const{id,emoji,name,role,type}=selectedCharToAdd;
-  if(addedChars[id]){showToast('Personagem já adicionado!');closeAddCharModal();return;}
-  addedChars[id]=selectedCharToAdd;
-  characters[id]={avatar:emoji,name,role,player:type==='player'?'Jogador Externo':'NPC — Mestre',isNPC:type==='npc',hp:20,hpMax:30,stats:[{n:'Força',v:12},{n:'Destreza',v:12},{n:'Constituição',v:12},{n:'Inteligência',v:12},{n:'Sabedoria',v:12},{n:'Carisma',v:12}],abilities:[{n:'A definir',d:'Ficha ainda não preenchida'}]};
-  const item=document.createElement('div');item.className='char-sidebar-item';item.setAttribute('onclick',`selectChar('${id}',this)`);item.setAttribute('data-char',id);item.innerHTML=`<span class="char-avatar-sm">${emoji}</span><span class="char-name-sm">${name}</span>${type==='npc'?'<span class="char-type-badge npc">NPC</span>':''}`;
-  document.getElementById(type==='npc'?'npcs-list':'players-list').appendChild(item);
-  closeAddCharModal();showToast(`✦ ${name} adicionado(a)!`);
 }
 
-function showToast(msg){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2600);}
+function tickClock(id, idx) {
+  const c = clocks.find(x => x.id === id);
+  if (!c) return;
+  // toggle: click on filled removes, click on empty fills up to that point
+  if (idx < c.filled) {
+    c.filled = idx;
+  } else {
+    c.filled = idx + 1;
+  }
+  renderClocks();
+  if (c.filled >= c.ticks) {
+    showToast(`⚡ Relógio "${c.name}" completado!`);
+    setTimeout(() => {
+      if (confirm(`O relógio "${c.name}" foi completado!\n\nDeseja enviar como:\n[OK] Aviso público\n[Cancelar] Manter como nota`)) {
+        openNarratorPostModal('warning');
+        document.getElementById('narrator-post-text').value = `O relógio "${c.name}" foi completado. Consequências entram em vigor.`;
+      }
+    }, 300);
+  }
+}
 
-document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay').forEach(o=>o.classList.remove('open'));});
+function openClockModal() {
+  clockType = 'positive';
+  setClockType('positive');
+  document.getElementById('clock-name').value = '';
+  openModal('modal-clock');
+}
+function setClockType(t) {
+  clockType = t;
+  ['positive','negative','neutral'].forEach(x => {
+    document.getElementById('ctype-'+x).className = 'clock-type-opt' + (t===x?' selected '+x:'');
+  });
+}
+function createClock() {
+  const name = document.getElementById('clock-name').value.trim();
+  if (!name) { showToast('⚠️ Dê um nome ao relógio'); return; }
+  const ticks = parseInt(document.getElementById('clock-ticks').value);
+  const visible = document.getElementById('clock-visible').checked;
+  clocks.push({ id:'clk-'+Date.now(), name, type:clockType, ticks, filled:0, visible });
+  renderClocks();
+  closeModal('modal-clock');
+  showToast(`🕐 Relógio "${name}" criado!`);
+}
+
+/* ============================================================
+   ADD CHARACTER
+============================================================ */
+function openAddCharModal() {
+  selectedCharToAdd = null;
+  document.querySelectorAll('.char-pick-item').forEach(e => e.classList.remove('selected'));
+  const btn = document.getElementById('confirm-add-char-btn');
+  btn.disabled = true; btn.style.opacity = '0.35';
+  openModal('modal-add-char');
+}
+function pickChar(el, id, emoji, name, role, type) {
+  document.querySelectorAll('.char-pick-item').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCharToAdd = {id, emoji, name, role, type};
+  const btn = document.getElementById('confirm-add-char-btn');
+  btn.disabled = false; btn.style.opacity = '1';
+}
+function confirmAddChar() {
+  if (!selectedCharToAdd) return;
+  const {id, emoji, name, role, type} = selectedCharToAdd;
+  if (addedChars[id]) { showToast('Já adicionado!'); closeModal('modal-add-char'); return; }
+  addedChars[id] = selectedCharToAdd;
+  characters[id] = {
+    avatar:emoji, name, role, player: type==='player'?'Jogador':'NPC — Mestre',
+    isNPC: type==='npc', status:'alive', hp:20, hpMax:30,
+    stats:[{n:'Força',v:12},{n:'Destreza',v:12},{n:'Const.',v:12},{n:'Intel.',v:12},{n:'Sabedoria',v:12},{n:'Carisma',v:12}],
+    abilities:[{n:'A definir',d:'Ficha pendente'}]
+  };
+  addCharToSidebar(id, emoji, name, role, type);
+  closeModal('modal-add-char');
+  showToast(`✦ ${name} adicionado!`);
+}
+function addCharToSidebar(id, emoji, name, role, type) {
+  const item = document.createElement('div');
+  item.className = 'sb-char-item';
+  item.setAttribute('onclick', `selectChar('${id}',this)`);
+  item.setAttribute('data-char', id);
+  item.innerHTML = `<span class="ch-avatar">${emoji}</span><span class="ch-name">${name}</span>${type==='npc'?'<span class="ch-badge npc">NPC</span>':''}`;
+  document.getElementById(type === 'npc' ? 'npcs-list' : 'players-list').appendChild(item);
+}
+
+/* ============================================================
+   ADMIN ACTIONS
+============================================================ */
+function approveUser(btn, name) {
+  const card = btn.closest('.user-card');
+  card.style.transition = 'opacity 0.3s'; card.style.opacity = '0';
+  setTimeout(() => card.remove(), 320);
+  showToast(`✅ ${name} aprovado!`);
+}
+function rejectUser(btn) {
+  const card = btn.closest('.user-card');
+  card.style.transition = 'opacity 0.3s'; card.style.opacity = '0';
+  setTimeout(() => card.remove(), 320);
+  showToast('❌ Usuário rejeitado');
+}
+function promoteUser(btn, name) {
+  btn.textContent = '✓ Narrador';
+  btn.disabled = true;
+  btn.closest('.user-card').querySelector('.badge').textContent = 'Narrador';
+  btn.closest('.user-card').querySelector('.badge').className = 'badge badge-narrator';
+  showToast(`⚡ ${name} promovido a Narrador!`);
+}
+
+/* ============================================================
+   ONBOARDING
+============================================================ */
+let selectedOnboardChar = null;
+function selectOnboardChar(el, name, role) {
+  document.querySelectorAll('.char-select-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedOnboardChar = {name, role};
+  document.getElementById('ob-name').value = name;
+  document.getElementById('ob-class').value = role;
+}
+function finishOnboarding() {
+  const name = document.getElementById('ob-name').value.trim();
+  if (!name) { showToast('⚠️ Dê um nome ao personagem'); return; }
+  showToast(`⚔️ ${name} pronto para zarpar!`);
+  showView('view-placeholder');
+}
+
+/* ============================================================
+   MODAL HELPERS
+============================================================ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(o => o.classList.remove('open'));
+});
+
+/* ============================================================
+   TOAST
+============================================================ */
+function showToast(msg) {
+  const ex = document.querySelector('.toast');
+  if (ex) ex.remove();
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
 </script>
 </body>
 </html>
